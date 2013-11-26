@@ -13,7 +13,7 @@ Features
 - In the engineering bay the player can increase weapon damage, hull armor, shield capacity, shield regeneration rate, sensor range and ship speed by spending currency/goods and repair any hull damage.
 - During travels the player will randomly encounter hostile ships. When this happens the screen transitions to the battle screen.
 - During battle, the player and AI take turns. The ship with the highest sensor range goes first. For every turn, only one action may be taken. The player can choose to drop the cargo  or flee in an attempt to leave the battle. Dropping the cargo will yield the highest chance of getting away. The player can also send out a distress call, this might result in the player getting aided by friendly shis, or the hostile ship to leave in fear of reinforcements. Lastly, the player may also attack the hostile ship until it retreats or gets destroyed.
-- When a ship takes damage, the shield will absorb a potion of the damage until it is depleted. Every turn the shield replenishes depending on the shield regeneration rate of the ship. When there's no shield to absorb the damage, the hull starts taking damage. When the hull reaches 0, it's game over and the player is returned to the last planet he/she left from.
+- When a ship takes damage, the shield will absorb all or a portion of the damage until it is depleted. Every turn the shield replenishes depending on the shield regeneration rate of the ship. When there's no shield to absorb the damage, the hull starts taking damage. When the hull reaches 0, it's game over and the player is returned to the last planet he/she left from.
 
 Frameworks, language and libraries
 ---------
