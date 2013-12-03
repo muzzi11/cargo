@@ -13,6 +13,13 @@ The UML diagram above describes all the classes and relations that are required 
 
 ----------
 
+States
+
+ - States will be maintained using the run and return successor patern.
+ - TitleScreen, Options, Battle, LandingBay, AuctionHouse, EngineeringBay and NewsReader all inherit from the State interface
+
+----------
+
 GUI
 
 
@@ -23,6 +30,10 @@ GUI
 
 Data
 
+ - Every few hours a news events will be generated, palyers will be able to read the last 10 news events. These 10 news events are stored between games.
+ - The economy of all planets are stored between games.
+ - The ships stats will be stored between games, as these can be upgraded.
+ - The ships cargo is stored.
 
 ----------
 
