@@ -30,14 +30,14 @@ Data
 Style Guide
 =======
 
-Style guide for java programming.
+Style guide for c# programming.
 
 ----------
 
 Comments
 ---------
 
-Not commenting at all is ok, when your code can be understood at a glance. Commenting too much indicates bad code.
+Not commenting at all is ok when your code can be understood at a glance. Commenting too much indicates bad code.
 Only write comments when it is really necessary. Try to write comments that address one or both of these questions:
 
 1. What does this block do?
@@ -84,13 +84,13 @@ Conditions
 Conditions containing a single statement:
 
 For example:
-``` java
+``` c#
 if (x > 0)
-    System.out.println("x is positive\n");
+    foo = 1;
 else if (x < 0)
-    System.out.println("x is negative\n");
+    foo = -1;
 else
-    System.out.println("x is zero\n");
+    foo = x;
 ```
 
 Notice how:
@@ -104,15 +104,15 @@ Notice how:
 ----------
 Conditions containing multiple statements:
 
-``` java
+``` c#
 if (x > 0)
 {
-    System.out.println("x is positive\n");
+    Console.write("x is positive\n");
     foo(x);
 }
 else if (x < 0)
 {
-    System.out.println("x is negative\n");
+    Console.write("x is negative\n");
     bar(x);
 }
 ```
@@ -126,12 +126,12 @@ Indentation
 
 Indent your code four spaces at a time to make clear which blocks of code are inside of others. Here’s some nicely indented code:
 
-``` java
-public static void main(String[] args) 
+``` c#
+public static void main() 
 {
-  System.out.println("No. of argumetns are: " + args.length);
-  for (int i= 0; i < args.length; i++)
-      System.out.println("Argument " + i + " is : " + args[i]);
+  Console.write("Hello world!");
+  for (int i= 0; i < 10; i++)
+      Console.write("Hello again, times " + i);
 }
 ```
 
@@ -147,7 +147,7 @@ For
 
 Whenever you need temporary variables for iteration, use i, then k, then m, unless more specific names would make your code more readable:
 
-``` java
+``` c#
 for (int i = 0; i < LIMIT; i++)
 {
     for (int k = 0; k < LIMIT; j++)
@@ -168,7 +168,7 @@ while
 
 Declare while loops as follows:
 
-``` java
+``` c#
 while (expression) 
 {
      statement(s)
@@ -181,11 +181,11 @@ do-while
 
 Declare do-while loops as follows:
 
-``` java
+``` c#
 int count = 1;
 do 
 {
-    System.out.println("Count is: " + count);
+    Console.write("Count is: " + count);
     count++;
 } while (count < 11);
 ```
@@ -198,7 +198,7 @@ Variables
 
 If declaring multiple variables of the same type at once, it's fine to declare them together, as in:
 
-``` java
+``` c#
 int quarters, dimes, nickels, pennies;
 ```
 
@@ -235,6 +235,3 @@ Specific Naming Conventions:
 7. Associated constants (final variables) should be prefixed by a common type name.
 8. Exception classes should be suffixed with Exception.
 9. Functions (methods returning an object) should be named after what they return and procedures (void methods) after what they do.
-
-
-  [1]: https://raw.github.com/muzzi11/hangman/master/Doc/uml-diagram.png
