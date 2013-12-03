@@ -3,7 +3,7 @@ Design Document
 
 UML Diagram
 -----------
-
+![diagram](https://raw.github.com/muzzi11/cargo/master/Doc/diagram.png)
 
 
 Implementation details

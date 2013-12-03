@@ -1,23 +1,23 @@
 Initialize engine version: 4.3.1f1 (cebd4d9b5122)
 GfxDevice: creating device client; threaded=1
 Direct3D:
-    Version:  Direct3D 9.0c [nvd3dumx.dll 9.18.13.3165]
-    Renderer: NVIDIA GeForce GTX 770
-    Vendor:   NVIDIA
-    VRAM:     1990 MB (via DXGI)
-    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=0 INTZ=1 RAWZ=0 NULL=1 RESZ=0 SlowINTZ=0
+    Version:  Direct3D 9.0c [aticfx64.dll 8.17.10.1230]
+    Renderer: AMD Radeon HD 7900 Series
+    Vendor:   ATI
+    VRAM:     3054 MB (via DXGI)
+    Caps:     Shader=30 DepthRT=1 NativeDepth=1 NativeShadow=1 DF16=1 INTZ=1 RAWZ=0 NULL=1 RESZ=1 SlowINTZ=1
 Begin MonoManager ReloadAssembly
-Platform assembly: E:\Users\Joshua\Projecten\UvA\Native-App Studio\cargo\Cargo\cargo_Data\Managed\UnityEngine.dll (this message is harmless)
-Loading E:\Users\Joshua\Projecten\UvA\Native-App Studio\cargo\Cargo\cargo_Data\Managed\UnityEngine.dll into Unity Child Domain
-Platform assembly: E:\Users\Joshua\Projecten\UvA\Native-App Studio\cargo\Cargo\cargo_Data\Managed\Assembly-CSharp.dll (this message is harmless)
-Loading E:\Users\Joshua\Projecten\UvA\Native-App Studio\cargo\Cargo\cargo_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
-- Completed reload, in  0.037 seconds
-desktop: 1920x1200 59Hz; virtual: 5520x1200 at 0,0
+Platform assembly: C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\cargo_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\cargo_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\cargo_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\cargo_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+- Completed reload, in  0.045 seconds
+desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
-UnloadTime: 0.402994 ms
+UnloadTime: 0.484691 ms
 Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
 
 Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 103.
-Total: 0.823928 ms (FindLiveObjects: 0.008659 ms CreateObjectMapping: 0.010206 ms MarkObjects: 0.184641 ms  DeleteObjects: 0.010206 ms)
+Total: 0.742597 ms (FindLiveObjects: 0.008938 ms CreateObjectMapping: 0.009932 ms MarkObjects: 0.192022 ms  DeleteObjects: 0.010594 ms)
 
