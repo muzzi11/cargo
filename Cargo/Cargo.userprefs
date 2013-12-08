@@ -1,10 +1,12 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TitleScreenState.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\OptionsState.cs">
     <Files>
+      <File FileName="Assets\Scripts\GUIResources.cs" Line="4" Column="7" />
       <File FileName="Assets\Scripts\State.cs" Line="3" Column="2" />
-      <File FileName="Assets\Scripts\MainMenu.cs" Line="10" Column="29" />
-      <File FileName="Assets\Scripts\TitleScreenState.cs" Line="8" Column="36" />
+      <File FileName="Assets\Scripts\MainMenu.cs" Line="11" Column="12" />
+      <File FileName="Assets\Scripts\TitleScreenState.cs" Line="17" Column="3" />
+      <File FileName="Assets\Scripts\OptionsState.cs" Line="27" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
