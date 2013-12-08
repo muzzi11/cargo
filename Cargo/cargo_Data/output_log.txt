@@ -11,13 +11,7 @@ Platform assembly: C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\ca
 Loading C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\cargo_Data\Managed\UnityEngine.dll into Unity Child Domain
 Platform assembly: C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\cargo_Data\Managed\Assembly-CSharp.dll (this message is harmless)
 Loading C:\Users\Mussi\Documents\UvA\Native App Studio\cargo\Cargo\cargo_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
-- Completed reload, in  0.045 seconds
+- Completed reload, in  0.039 seconds
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
-UnloadTime: 0.484691 ms
-Unloading 3 Unused Serialized files (Serialized files now loaded: 0 / Dirty serialized files: 0)
-
-Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 103.
-Total: 0.742597 ms (FindLiveObjects: 0.008938 ms CreateObjectMapping: 0.009932 ms MarkObjects: 0.192022 ms  DeleteObjects: 0.010594 ms)
-

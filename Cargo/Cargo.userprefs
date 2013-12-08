@@ -1,8 +1,10 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MainMenu.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TitleScreenState.cs">
     <Files>
-      <File FileName="Assets\Scripts\MainMenu.cs" Line="7" Column="26" />
+      <File FileName="Assets\Scripts\State.cs" Line="3" Column="2" />
+      <File FileName="Assets\Scripts\MainMenu.cs" Line="10" Column="29" />
+      <File FileName="Assets\Scripts\TitleScreenState.cs" Line="8" Column="36" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
