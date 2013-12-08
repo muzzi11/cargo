@@ -17,8 +17,7 @@ public class OptionsState : State
 	{
 		GUILayout.BeginArea(new Rect(0, 0, width, height));
 		{
-			if(GUILayout.Button("Back", "titleScreenButton"))
-				return returnToState;
+			if(GUILayout.Button("Back", "titleScreenButton")) return returnToState;
 		}
 		GUILayout.EndArea();
 
