@@ -23,6 +23,8 @@ public class Game : MonoBehaviour
 		ship.Update();
 		playerNode.transform.position = ship.GetPosition();
 		UpdateCameraPosition();
+
+		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
 	}
 
 	void OnGUI()
