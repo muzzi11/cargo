@@ -22,15 +22,9 @@ public class AuctionHouseState : State
 	
 	public State UpdateState()
 	{
-		if (returnToPrevState)
-		{
-			returnToPrevState = false;
-			return returnToState;
-		}
-		
 		GUI.Window(0, new Rect(width / 2 - 100, height - 200, 200, 100), AuctionHouseWindow, auctionHouseCaption);
 		
-		return this;
+		return returnToPrevState ? returnToState : this;
 	}
 	
 	public void AuctionHouseWindow(int ID)
@@ -39,6 +33,7 @@ public class AuctionHouseState : State
 		{
 			if(GUILayout.Button("Back", "hudButton")) returnToPrevState = true;
 		}
+		GUILayout.EndArea();
 		
 		GUI.DragWindow(new Rect(0, 0, 10000, 10000));
 	}
