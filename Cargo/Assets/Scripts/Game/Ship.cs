@@ -12,14 +12,21 @@ public class Ship
 		destination = new Vector2(position.x, position.y);
 	}
 
-	public Vector2 GetPosition()
+	// Returns a copy of the ship's position
+	public Vector2 Position
 	{
-		return new Vector2(position.x, position.y);
+		get
+		{
+			return new Vector2(position.x, position.y); 
+		}
 	}
 
-	public void SetDestination(float x, float y)
+	public Vector2 Destination
 	{
-		destination.Set(x, y);
+		set
+		{
+			destination.Set(value.x, value.y);
+		}
 	}
 
 	private void Travel(float distance)

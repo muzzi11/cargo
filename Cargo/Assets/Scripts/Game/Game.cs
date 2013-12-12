@@ -6,6 +6,7 @@ public class Game : MonoBehaviour
 	public Rect cameraBounds;
 
 	private Ship ship;
+	private Space space;
 	private State currentState;
 	private GameObject playerNode;
 
@@ -13,7 +14,8 @@ public class Game : MonoBehaviour
 	void Start()
 	{
 		ship = new Ship(new Vector2(15, 15));
-		currentState = new NavigationState(ship);
+		space = GameObject.Find("Space").GetComponent<Space>();
+		currentState = new NavigationState(space, ship);
 		playerNode = GameObject.Find("Player Node");
 	}
 	
@@ -21,7 +23,7 @@ public class Game : MonoBehaviour
 	void Update()
 	{
 		ship.Update();
-		playerNode.transform.position = ship.GetPosition();
+		playerNode.transform.position = ship.Position;
 		UpdateCameraPosition();
 
 		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
@@ -34,7 +36,7 @@ public class Game : MonoBehaviour
 
 	private void UpdateCameraPosition()
 	{
-		Vector3 cameraPos = ship.GetPosition();
+		Vector3 cameraPos = ship.Position;
 
 		cameraPos.x = Mathf.Clamp(cameraPos.x, cameraBounds.xMin, cameraBounds.xMax);
 		cameraPos.y = Mathf.Clamp(cameraPos.y, cameraBounds.yMin, cameraBounds.yMax);
