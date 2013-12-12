@@ -44,12 +44,14 @@ public class NavigationState : State
 			ship.Destination = worldPosition;
 		}
 
-		if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))
+		if (Event.current.type == EventType.Repaint)
 		{
-			planetDestination = null;
-			return auctionHouseState;
+			if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))
+			{
+				planetDestination = null;
+				return auctionHouseState;			
+			}
 		}
-
 		return this;
-	}
+	}		
 }
