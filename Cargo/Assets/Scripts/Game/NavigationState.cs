@@ -32,9 +32,9 @@ public class NavigationState : State
 		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y);
 		worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
-		GUI.BeginGroup(new Rect(0, 0, width, 100));
+		GUI.BeginGroup(new Rect(0, 0, width, 200));
 		{
-			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption)) return auctionHouseState;
+			if(GUI.Button(new Rect(0, 0, 128, 64), inventoryCaption)) return auctionHouseState;
 		}
 		GUI.EndGroup();
 		
