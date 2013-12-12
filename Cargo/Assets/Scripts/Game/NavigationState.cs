@@ -34,7 +34,7 @@ public class NavigationState : State
 
 		GUI.BeginGroup(new Rect(0, 0, width, 100));
 		{
-			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption, buttonStyle)) return auctionHouseState;
+			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption)) return auctionHouseState;
 		}
 		GUI.EndGroup();
 		
