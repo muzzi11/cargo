@@ -29,14 +29,12 @@ public class NavigationState : State
 
 	public State UpdateState()
 	{
-		State returnState = this;
-
 		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y);
 		worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
 		GUI.BeginGroup(new Rect(0, 0, width, 100));
 		{
-			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption, buttonStyle)) returnState = auctionHouseState;
+			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption, buttonStyle)) return auctionHouseState;
 		}
 		GUI.EndGroup();
 		
@@ -46,12 +44,15 @@ public class NavigationState : State
 			ship.Destination = worldPosition;
 		}
 
-		if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))
+		if (Event.current.type == EventType.Repaint)
 		{
-			planetDestination = null;
-			return auctionHouseState;
+			if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))
+			{
+				planetDestination = null;
+				return auctionHouseState;			
+			}
 		}
 
-		return returnState;
-	}
+		return this;
+	}		
 }

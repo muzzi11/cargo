@@ -32,7 +32,7 @@ public class Game : MonoBehaviour
 
 	void OnGUI()
 	{
-		GUI.skin = guiSkin;
+		GUI.skin = guiSkin;		
 		currentState = currentState.UpdateState();
 	}
 
