@@ -1,15 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game\AuctionHouseState.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game\Table.cs">
     <Files>
-      <File FileName="Assets\Scripts\Game\Game.cs" Line="35" Column="21" />
-      <File FileName="Assets\Scripts\Game\Space.cs" Line="42" Column="24" />
-      <File FileName="Assets\Scripts\Game\Planet.cs" Line="6" Column="26" />
-      <File FileName="Assets\Scripts\Game\NavigationState.cs" Line="31" Column="3" />
-      <File FileName="Assets\Scripts\Game\Ship.cs" Line="15" Column="33" />
-      <File FileName="Assets\Scripts\Game\AuctionHouseState.cs" Line="38" Column="3" />
-      <File FileName="Assets\Scripts\MainMenu\MainMenu.cs" Line="21" Column="21" />
-      <File FileName="Assets\Scripts\MainMenu\TitleScreenState.cs" Line="20" Column="3" />
+      <File FileName="Assets\Scripts\Game\AuctionHouseState.cs" Line="36" Column="157" />
+      <File FileName="Assets\Scripts\Game\Game.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\Space.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\Planet.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\NavigationState.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\Ship.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\MainMenu\TitleScreenState.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Game\Table.cs" Line="7" Column="29" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
