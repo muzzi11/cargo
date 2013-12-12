@@ -3,16 +3,25 @@ using System.Collections;
 
 public class NavigationState : State
 {
+	int width, height;
 	private Ship ship;
 	private Space space;
 	private Planet planetDestination = null;
 	private Vector2 screenPosition, worldPosition;
+
+	private AuctionHouseState auctionHouseState; 
+	private string inventoryCaption = "Inventory";	
+	private string buttonStyle = "hudButton";
 
 
 	public NavigationState(Space space, Ship ship)
 	{
 		screenPosition = new Vector2();
 		worldPosition = new Vector2();
+		auctionHouseState = new AuctionHouseState(this);
+
+		width = Screen.width;
+		height = Screen.height;
 
 		this.ship = ship;
 		this.space = space;
@@ -22,6 +31,12 @@ public class NavigationState : State
 	{
 		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y);
 		worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
+
+		GUI.BeginGroup(new Rect(0, 0, width, 100));
+		{
+			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption, buttonStyle)) return auctionHouseState;
+		}
+		GUI.EndGroup();
 		
 		if(Input.GetMouseButtonUp(0))
 		{
@@ -31,7 +46,8 @@ public class NavigationState : State
 
 		if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))
 		{
-			// open auction house
+			planetDestination = null;
+			return auctionHouseState;
 		}
 
 		return this;

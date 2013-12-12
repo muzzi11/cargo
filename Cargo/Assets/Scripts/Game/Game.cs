@@ -4,6 +4,7 @@ using System.Collections;
 public class Game : MonoBehaviour
 {
 	public Rect cameraBounds;
+	public GUISkin guiSkin;
 
 	private Ship ship;
 	private Space space;
@@ -31,6 +32,7 @@ public class Game : MonoBehaviour
 
 	void OnGUI()
 	{
+		GUI.skin = guiSkin;
 		currentState = currentState.UpdateState();
 	}
 

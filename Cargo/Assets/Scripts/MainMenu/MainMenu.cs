@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
-	public GUISkin mySkin;
+	public GUISkin guiSkin;
 	private State currentState;
 
 	void Start()
@@ -18,7 +18,7 @@ public class MainMenu : MonoBehaviour
 	
 	void OnGUI()
 	{
-		GUI.skin = mySkin;
+		GUI.skin = guiSkin;
 		currentState = currentState.UpdateState();
 	}
 }
