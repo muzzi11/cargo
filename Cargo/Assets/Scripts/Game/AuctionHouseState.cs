@@ -22,6 +22,8 @@ public class AuctionHouseState : State
 	
 	public State UpdateState()
 	{
+		returnToPrevState = false;
+
 		GUI.Window(0, new Rect(width / 2 - 100, height - 200, 200, 100), AuctionHouseWindow, auctionHouseCaption);
 		
 		return returnToPrevState ? returnToState : this;
