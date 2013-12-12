@@ -24,31 +24,67 @@ public class AuctionHouseState : State
 		screenHeight = Screen.height;
 		windowWidth = screenWidth *0.8f;
 		windowHeight = screenHeight *0.7f;
-		table = new Table(new Rect(10, 60, windowWidth - 20, windowHeight - 40));
+		table = new Table((int)windowWidth, (int)windowHeight - 110);
 		
 		table.LoadData(
 			new List<Item>()
 			{
-			new Item()
-			{
-				Name = "Iron ore"
-			},
-			new Item()
-			{
-				Name = "Adamantium"
-			},
-			new Item()
-			{
-				Name = "Vibranium"
-			}
+				new Item()
+				{
+					Name = "Iron ore"
+				},
+				new Item()
+				{
+					Name = "Adamantium"
+				},
+				new Item()
+				{
+					Name = "Vibranium"
+				},
+				new Item()
+				{
+					Name = "Iron ore"
+				},
+				new Item()
+				{
+					Name = "Adamantium"
+				},
+				new Item()
+				{
+					Name = "Vibranium"
+				},
+				new Item()
+				{
+					Name = "Iron ore"
+				},
+				new Item()
+				{
+					Name = "Adamantium"
+				},
+				new Item()
+				{
+					Name = "Vibranium"
+				},
+				new Item()
+				{
+					Name = "Iron ore"
+				},
+				new Item()
+				{
+					Name = "Adamantium"
+				},
+				new Item()
+				{
+					Name = "Vibranium"
+				},
 			},
 			new List<int>()
 			{
-				167, 13, 24
+				167, 13, 24,167, 13, 24,167, 13, 24,167, 13, 24,
 			},
 			new List<int>()
 			{
-				12, 45, 137
+				12, 45, 137,12, 45, 137,12, 45, 137,12, 45, 137,
 			}
 		);
 	}
@@ -67,9 +103,13 @@ public class AuctionHouseState : State
 	
 	public void AuctionHouseWindow(int ID)
 	{	
-		table.Render();
+		GUILayout.BeginArea(new Rect(5, 60, windowWidth, windowHeight - 110));
+		{
+			table.Render();
+		}
+		GUILayout.EndArea();				
 		
-		GUILayout.BeginArea(new Rect(5, windowHeight-40, windowWidth, 40));
+		GUILayout.BeginArea(new Rect(5, windowHeight-50, windowWidth, 40));
 		{
 			if(GUI.Button(new Rect(0, 0, windowWidth/2, 40),"Back", "hudButton")) returnToPrevState = true;
 			

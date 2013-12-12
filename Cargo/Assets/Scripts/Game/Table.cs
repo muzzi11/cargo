@@ -5,16 +5,19 @@ public class Table
 {
 	private List<List<string>> table;
 	private List<float> colWidth;
-	private Rect rect;
+	private int width, height;
+	private Vector2 scrollPosition;
 	
-	public Table(Rect rect)
+	public Table(int width, int height)
 	{
-		this.rect = rect;
+		this.width = width - 10;
+		this.height = height;
+		
 		table = new List<List<string>>();
 		
 		colWidth = new List<float>()
 		{
-			0.6f, 0.18f, 0.18f
+			0.55f, 0.15f, 0.15f
 		};
 	}
 	
@@ -35,19 +38,20 @@ public class Table
 	
 	public void Render()
 	{		
-		GUILayout.BeginArea(rect);
+		scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Width(width), GUILayout.Height(height));
 		
 		foreach(List<string> row in table)
 		{
 			int counter = 0;
 			GUILayout.BeginHorizontal();
+			
 			foreach(string cell in row)	
 			{		
-				GUILayout.TextField(cell, GUILayout.Width(rect.width * colWidth[counter]));
+				GUILayout.Label(cell, GUILayout.Width(width * colWidth[counter]));
 				++counter;
 			}
 			GUILayout.EndHorizontal();			
 		}		
-		GUILayout.EndArea();
+		GUILayout.EndScrollView();
 	}
 }
