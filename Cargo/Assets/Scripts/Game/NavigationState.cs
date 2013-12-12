@@ -29,12 +29,14 @@ public class NavigationState : State
 
 	public State UpdateState()
 	{
+		State returnState = this;
+
 		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y);
 		worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
 		GUI.BeginGroup(new Rect(0, 0, width, 100));
 		{
-			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption, buttonStyle)) return auctionHouseState;
+			if(GUI.Button(new Rect(0, 0, 200, 40), inventoryCaption, buttonStyle)) returnState = auctionHouseState;
 		}
 		GUI.EndGroup();
 		
@@ -50,6 +52,6 @@ public class NavigationState : State
 			return auctionHouseState;
 		}
 
-		return this;
+		return returnState;
 	}
 }
