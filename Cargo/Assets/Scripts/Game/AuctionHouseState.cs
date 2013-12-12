@@ -24,7 +24,7 @@ public class AuctionHouseState : State
 		screenHeight = Screen.height;
 		windowWidth = screenWidth *0.8f;
 		windowHeight = screenHeight *0.7f;
-		table = new Table(new Rect(windowWidth*.05f, 25, windowWidth *.9f, windowHeight - 40.0f));
+		table = new Table(new Rect(10, 60, windowWidth - 20, windowHeight - 40));
 		
 		table.LoadData(
 			new List<Item>()
