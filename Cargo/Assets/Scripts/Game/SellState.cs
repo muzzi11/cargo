@@ -6,7 +6,7 @@ public class SellState : OrderState
 	{
 		this.balance = balance;
 		orderCaption = "Selling ";
-		confirmOrderCaption = "Sell";
+		placeOrder = "Sell";
 		sumCaption = "<size=24>Profits: ${0}</size>";
 	}
 	

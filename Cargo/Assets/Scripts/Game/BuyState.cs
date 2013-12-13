@@ -8,8 +8,8 @@ public class BuyState : OrderState
 
 	public BuyState(State returnToState, Balance balance) : base(returnToState, balance)
 	{
-		orderCaption = "Buying ";
-		confirmOrderCaption = "Buy";
+		orderCaption = "Buying {0}";
+		placeOrder = "Buy";
 		sumCaption = "<size=24>Total cost: ${0}</size>";
 	}
 
@@ -31,24 +31,22 @@ public class BuyState : OrderState
 			return returnToState;
 		}
 
+		if(orderPlaced) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
 		if(!sufficientFunds) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), FailWindow, insufficientFundsCaption);
 
-		if (order != null)
-		{
-			GUI.Window(0, new Rect(0, 0, width, height), BuyWindow, orderCaption + order.stack.item.name);
-		}
+		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
+
 		return this;
 	}
 
 	public void FailWindow(int ID)
 	{
-		GUILayout.FlexibleSpace();
+		int toShort = orderValue - balance.GetBalance();
 		
 		GUILayout.BeginVertical();
 		{
-			int toShort = orderValue - balance.GetBalance();
+			GUILayout.Space(40);
 			GUILayout.Label(string.Format(dollazShortCaption, toShort), normalLabel);
-
 			GUILayout.FlexibleSpace();
 
 			if(GUILayout.Button("Back")) sufficientFunds = true;
