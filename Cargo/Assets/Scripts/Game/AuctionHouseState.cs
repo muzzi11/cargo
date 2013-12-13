@@ -111,10 +111,10 @@ public class AuctionHouseState : State
 		
 		GUILayout.BeginArea(new Rect(5, windowHeight-50, windowWidth, 40));
 		{
-			if(GUI.Button(new Rect(0, 0, windowWidth/2, 40),"Back", "hudButton")) returnToPrevState = true;
+			if(GUI.Button(new Rect(0, 0, windowWidth/2, 40),"Back")) returnToPrevState = true;
 			
 			currentCaption = isBuying ? buyCaption : sellCaption;
-			if(GUI.Button(new Rect(windowWidth/2, 0, windowWidth/2, 40),currentCaption, "hudButton")) 
+			if(GUI.Button(new Rect(windowWidth/2, 0, windowWidth/2, 40),currentCaption)) 
 				isBuying = (isBuying) ? false : true;			
 		}
 		GUILayout.EndArea();				
