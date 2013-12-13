@@ -64,10 +64,18 @@ public class OrderState : State
 			}
 			GUILayout.EndHorizontal();
 
-			quantity = GUILayout.HorizontalSlider(quantity, 1, order.quantity);
-			int total = order.value * (int)quantity;
-			GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
-			GUILayout.Label("<size=24>" + totalPriceCaption + total + "</size>", normalLabel);
+			GUILayout.FlexibleSpace();
+
+			GUILayout.BeginVertical();
+			{
+				quantity = GUILayout.HorizontalSlider(quantity, 1, order.quantity);
+				int total = order.value * (int)quantity;
+				GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
+				GUILayout.Label("<size=24>" + totalPriceCaption + total + "</size>", normalLabel);
+			}
+			GUILayout.EndVertical();
+
+			GUILayout.FlexibleSpace();
 
 			GUILayout.BeginHorizontal();
 			{
