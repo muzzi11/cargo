@@ -4,22 +4,23 @@ using System.Collections.Generic;
 public class OrderState : State
 {
 	private float quantity = 1.0f;
-	private State returnToState;
-
-	private string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel";
+	
 	private string nameCaption = "Name:",
 				   volumeCaption = "Volume:",
 				   weightCaption = "Weight:",
 				   priceCaption = "Price:",
-				   quantityCaption = "Quantity: x",
-		   		   totalPriceCaption = "Total price: $",
-				   balanceCaption = "Balance: $";
+				   quantityCaption = "<size=24>Quantity: x{0} </size>",
+				   balanceCaption = "<size=24>Balance: ${0} </size>";
 
-	public int width, height;
-	public bool returnToPrevState;
+	public string orderCaption, placeOrder, sumCaption;
+	public string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel",
+				  confirmationCaption = "Please confirm your transaction.";
+
+	public State returnToState;
+	public int width, height, orderValue;
+	public bool returnToPrevState, orderPlaced = false;
 	public Order order;
 	public Balance balance;
-	public string orderCaption, confirmOrderCaption;
 
 	public OrderState(State returnToState, Balance balance)
 	{
@@ -29,7 +30,7 @@ public class OrderState : State
 		height = Screen.height;
 	}
 
-	public State UpdateState()
+	public virtual State UpdateState()
 	{	
 		if (returnToPrevState)
 		{
@@ -37,19 +38,17 @@ public class OrderState : State
 			return returnToState;
 		}
 
-		if (order != null)
-		{
-			GUI.Window(0, new Rect(0, 0, width, height), BuyWindow, orderCaption + order.stack.item.name);
-		}
+		if (orderPlaced) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
+
+		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
+
 		return this;
 	}
 
-	public void BuyWindow(int ID)
+	public void TransactionWindow(int ID)
 	{
 		GUILayout.BeginVertical();
 		{
-			int orderValue;
-
 			GUILayout.Space(40);
 
 			GUILayout.BeginHorizontal();
@@ -78,9 +77,9 @@ public class OrderState : State
 				orderValue = order.value * (int)quantity;
 				int remainder = UpdateBalance(orderValue);
 
-				GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
-				GUILayout.Label("<size=24>" + totalPriceCaption + orderValue + "</size>", normalLabel);
-				GUILayout.Label("<size=24>" + balanceCaption + remainder + "</size>", normalLabel);
+				GUILayout.Label(string.Format(quantityCaption, (int)quantity), normalLabel, GUILayout.ExpandWidth(true));
+				GUILayout.Label(string.Format(sumCaption, orderValue), normalLabel);
+				GUILayout.Label(string.Format(balanceCaption, remainder), normalLabel);
 			}
 			GUILayout.EndVertical();
 
@@ -89,9 +88,23 @@ public class OrderState : State
 			GUILayout.BeginHorizontal();
 			{
 				if(GUILayout.Button("Back")) returnToPrevState = true;
-				if(GUILayout.Button(confirmOrderCaption)) ProcessTransaction(orderValue);
+				if(GUILayout.Button(placeOrder)) orderPlaced = true; 
 			}
 			GUILayout.EndHorizontal();
+		}
+		GUILayout.EndVertical();
+	}
+
+	public void ConfirmationWindow(int ID)
+	{
+		GUILayout.FlexibleSpace();
+		
+		GUILayout.BeginVertical();
+		{
+			GUILayout.Space(40);			
+			GUILayout.FlexibleSpace();
+			
+			if(GUILayout.Button("Back")) orderPlaced = false;
 		}
 		GUILayout.EndVertical();
 	}
