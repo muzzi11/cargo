@@ -4,8 +4,14 @@ using System.Collections.Generic;
 public class Table
 {
 	private List<List<string>> table;
+	private List<Item> items;
+	private List<int> quantities;
+
 	private Vector2 scrollPosition;
-	
+
+	public event OrderHandler orderPlaced;
+	public delegate void OrderHandler(Order order);
+
 	public Table(int width)
 	{
 		table = new List<List<string>>();
@@ -13,6 +19,9 @@ public class Table
 	
 	public void LoadData(List<Item> items, List<int> quantities, List<int> values)
 	{
+		this.items = items;
+		this.quantities = quantities;
+
 		for(int i = 0; i < items.Count; ++i)
 		{			
 			table.Add(new List<string>()
@@ -24,15 +33,25 @@ public class Table
 		}
 	}
 	
-	public void Render()
+	public bool Render()
 	{		
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 		{
-			foreach(List<string> row in table)
+			for(int i = 0; i < table.Count; i++)
 			{
+				List<string> row = table[i];
 				GUILayout.BeginHorizontal();
 				{
-					GUILayout.Button(row[0], "tableItem", GUILayout.ExpandWidth(true));
+					if (GUILayout.Button(row[0], "tableItem", GUILayout.ExpandWidth(true)))
+				    {
+						Order order = new Order()
+						{
+							item = items[i],
+							quantity = quantities[i]
+						};
+						orderPlaced(order);
+						return true;
+					}
 					GUILayout.Label(row[1], GUILayout.Width(50));
 					GUILayout.Label(row[2], GUILayout.Width(50));
 				}
@@ -40,5 +59,7 @@ public class Table
 			}
 		}
 		GUILayout.EndScrollView();
+
+		return false;
 	}
 }
