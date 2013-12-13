@@ -1,9 +1,24 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class OrderState : State
+public class Order
 {
-	private float quantity = 1.0f;
+	public string name;
+	public int quantity, value, volume, weight;
+
+	public Order(string name, int quantity, int value, int volume, int weight)
+	{
+		this.name = name;
+		this.quantity = quantity;
+		this.value = value;
+		this.volume = volume;
+		this.weight = weight;
+	}
+}
+
+public abstract class OrderState : State
+{
+	private float quantitySlider = 1.0f;
 	
 	private string nameCaption = "Name:",
 				   volumeCaption = "Volume:",
@@ -12,40 +27,31 @@ public class OrderState : State
 				   quantityCaption = "<size=24>Quantity: x{0} </size>",
 				   balanceCaption = "<size=24>Balance: ${0} </size>";
 
-	public string orderCaption, placeOrder, sumCaption;
-	public string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel",
+	protected string orderCaption, placeOrder, sumCaption;
+	protected string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel",
 				  confirmationCaption = "Please confirm your transaction.";
 
-	public State returnToState;
-	public int width, height, orderValue;
-	public bool returnToPrevState, orderPlaced = false;
-	public Order order;
-	public Balance balance;
+	protected State returnToState;
+	protected int width, height, orderValue;
+	protected bool returnToPrevState, orderPlaced = false;
+	protected Order order;
+	protected Balance balance;
 
-	public OrderState(State returnToState, Balance balance)
+	public OrderState(State returnToState, Balance balance, Order order)
 	{
 		this.balance = balance;
 		this.returnToState = returnToState;
+		this.order = order;
+
 		width = Screen.width;
 		height = Screen.height;
 	}
 
-	public virtual State UpdateState()
-	{	
-		if (returnToPrevState)
-		{
-			returnToPrevState = false;
-			return returnToState;
-		}
+	public abstract State UpdateState();
+	protected abstract int UpdateBalance(int orderValue);
+	protected abstract void ProcessTransaction(int orderValue);
 
-		if (orderPlaced) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
-
-		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
-
-		return this;
-	}
-
-	public void TransactionWindow(int ID)
+	protected void TransactionWindow(int ID)
 	{
 		GUILayout.BeginVertical();
 		{
@@ -62,9 +68,9 @@ public class OrderState : State
 
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(order.stack.item.name, leftAlignedLabel, GUILayout.ExpandWidth(true));
-				GUILayout.Label(order.stack.item.volume.ToString(), GUILayout.Width(65));
-				GUILayout.Label(order.stack.item.weight.ToString(), GUILayout.Width(65));
+				GUILayout.Label(order.name, leftAlignedLabel, GUILayout.ExpandWidth(true));
+				GUILayout.Label(order.volume.ToString(), GUILayout.Width(65));
+				GUILayout.Label(order.weight.ToString(), GUILayout.Width(65));
 				GUILayout.Label("$" + order.value.ToString(), GUILayout.Width(55));
 			}
 			GUILayout.EndHorizontal();
@@ -73,11 +79,12 @@ public class OrderState : State
 
 			GUILayout.BeginVertical();
 			{
-				quantity = GUILayout.HorizontalSlider(quantity, 1, order.stack.quantity);
-				orderValue = order.value * (int)quantity;
+				quantitySlider = GUILayout.HorizontalSlider(quantitySlider, 1, order.quantity);
+				int quantity = Mathf.RoundToInt(quantitySlider);
+				orderValue = order.value * quantity;
 				int remainder = UpdateBalance(orderValue);
 
-				GUILayout.Label(string.Format(quantityCaption, (int)quantity), normalLabel, GUILayout.ExpandWidth(true));
+				GUILayout.Label(string.Format(quantityCaption, (int)quantitySlider), normalLabel, GUILayout.ExpandWidth(true));
 				GUILayout.Label(string.Format(sumCaption, orderValue), normalLabel);
 				GUILayout.Label(string.Format(balanceCaption, remainder), normalLabel);
 			}
@@ -95,7 +102,7 @@ public class OrderState : State
 		GUILayout.EndVertical();
 	}
 
-	public void ConfirmationWindow(int ID)
+	protected void ConfirmationWindow(int ID)
 	{
 		GUILayout.FlexibleSpace();
 		
@@ -107,14 +114,5 @@ public class OrderState : State
 			if(GUILayout.Button("Back")) orderPlaced = false;
 		}
 		GUILayout.EndVertical();
-	}
-
-	public virtual int UpdateBalance(int orderValue)
-	{
-		return orderValue;
-	}
-
-	public virtual void ProcessTransaction(int orderValue)
-	{
 	}
 }

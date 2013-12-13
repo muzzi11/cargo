@@ -16,7 +16,7 @@ public class Economy
 		foreach(int id in itemIDs)
 		{
 			float multiplier = Random.Range(minValueMultiplier, maxValueMultiplier);
-			int value = Mathf.RoundToInt(multiplier * ItemTable.GetBaseValue());
+			int value = Mathf.RoundToInt(multiplier * ItemTable.GetBaseValue(id));
 			itemValues.Add(id, value);
 
 			if(Random.value > 0.5f)
@@ -26,22 +26,40 @@ public class Economy
 		}
 	}
 
-	public List<IDQuantityPair> GetItemQuantities()
+	public List<Item> GetItems()
 	{
-		var list = new List<IDQuantityPair>();
+		var list = new List<Item>();
 
 		foreach(var pair in items)
 		{
-			list.Add(new IDQuantityPair(pair.Key, pair.Value));
+			var item = new Item();
+
+			item.id = pair.Key;
+			item.name = ItemTable.GetName(pair.Key);
+
+			list.Add(item);
 		}
 
 		return list;
 	}
 
+	public int GetQuantity(int id)
+	{
+		return items[id];
+	}
+
+	public int GetValue(int id)
+	{
+		return itemValues[id];
+	}
+
 	public void Consume(int id, int amount)
 	{
-		if(items[id] >= amount) items[id] -= amount;
-		if(items[id] == 0) items.Remove(id);
+		if(items.ContainsKey(id))
+		{
+			if(items[id] >= amount) items[id] -= amount;
+			if(items[id] == 0) items.Remove(id);
+		}
 	}
 
 	public void Supply(int id, int amount)

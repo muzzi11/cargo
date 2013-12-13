@@ -1,11 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game\AuctionHouseState.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Game\OrderState.cs">
     <Files>
-      <File FileName="Assets\Scripts\Game\Economy.cs" Line="6" Column="27" />
-      <File FileName="Assets\Scripts\Game\Item.cs" Line="15" Column="37" />
-      <File FileName="Assets\Scripts\Game\ItemFactory.cs" Line="75" Column="30" />
-      <File FileName="Assets\Scripts\Game\AuctionHouseState.cs" Line="50" Column="51" />
+      <File FileName="Assets\Scripts\Game\AuctionHouseState.cs" Line="31" Column="27" />
+      <File FileName="Assets\Scripts\Game\OrderState.cs" Line="4" Column="1" />
+      <File FileName="Assets\Scripts\Game\BuyState.cs" Line="35" Column="50" />
+      <File FileName="Assets\Scripts\Game\SellState.cs" Line="17" Column="30" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

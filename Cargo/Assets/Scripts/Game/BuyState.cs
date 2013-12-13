@@ -6,19 +6,19 @@ public class BuyState : OrderState
 	private string dollazShortCaption = "<size=24>You are {0} dollaz short.</size>";
 	private bool sufficientFunds = true;
 
-	public BuyState(State returnToState, Balance balance) : base(returnToState, balance)
+	public BuyState(State returnToState, Balance balance, Order order) : base(returnToState, balance, order)
 	{
 		orderCaption = "Buying {0}";
 		placeOrder = "Buy";
 		sumCaption = "<size=24>Total cost: ${0}</size>";
 	}
 
-	public override int UpdateBalance(int orderValue)
+	protected override int UpdateBalance(int orderValue)
 	{
 		return balance.GetBalance() - orderValue;
 	}
 
-	public override void ProcessTransaction(int orderValue)
+	protected override void ProcessTransaction(int orderValue)
 	{
 		sufficientFunds = returnToPrevState = balance.withdraw(orderValue);
 	}	
@@ -34,7 +34,7 @@ public class BuyState : OrderState
 		if(orderPlaced) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
 		if(!sufficientFunds) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), FailWindow, insufficientFundsCaption);
 
-		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
+		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.name));
 
 		return this;
 	}
