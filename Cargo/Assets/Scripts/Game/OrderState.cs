@@ -5,14 +5,14 @@ public class OrderState : State
 {
 	private int width, height;
 	private float quantity = 0.0f;
-	private string labelStyle = "leftAlignedLabel";
-	public string orderCaption;
-	private string nameCaption = "Name:";
-	private string volumeCaption = "Volume:";
-	private string weightCaption = "Weight:";
-	private string priceCaption = "Price:";
-	private string quantityCaption = "Quantity: ";
-	private string totalPriceCaption = "Total price: ";
+	private string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel";
+	public string orderCaption, confirmOrderCaption;
+	private string nameCaption = "Name:",
+				   volumeCaption = "Volume:",
+				   weightCaption = "Weight:",
+				   priceCaption = "Price:",
+				   quantityCaption = "Quantity: x",
+		   		   totalPriceCaption = "Total price: $";
 	private State returnToState;
 	public Order order;
 
@@ -48,7 +48,7 @@ public class OrderState : State
 
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(nameCaption, labelStyle, GUILayout.ExpandWidth(true));
+				GUILayout.Label(nameCaption, leftAlignedLabel, GUILayout.ExpandWidth(true));
 				GUILayout.Label(volumeCaption, GUILayout.Width(65));
 				GUILayout.Label(weightCaption, GUILayout.Width(65));
 				GUILayout.Label(priceCaption, GUILayout.Width(55));
@@ -57,7 +57,7 @@ public class OrderState : State
 
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(order.item.Name, labelStyle, GUILayout.ExpandWidth(true));
+				GUILayout.Label(order.item.Name, leftAlignedLabel, GUILayout.ExpandWidth(true));
 				GUILayout.Label(order.item.Volume.ToString(), GUILayout.Width(65));
 				GUILayout.Label(order.item.Weight.ToString(), GUILayout.Width(65));
 				GUILayout.Label("$" + order.value.ToString(), GUILayout.Width(55));
@@ -66,12 +66,13 @@ public class OrderState : State
 
 			quantity = GUILayout.HorizontalSlider(quantity, 0, order.quantity);
 			int total = order.value * (int)quantity;
-			GUILayout.Label(quantityCaption + 'x' + (int)quantity, labelStyle, GUILayout.ExpandWidth(true));
-			GUILayout.Label("<size=50>" + totalPriceCaption + "$" + total + "</size>", "normalLabel");
+			GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
+			GUILayout.Label("<size=24>" + totalPriceCaption + total + "</size>", normalLabel);
 
 			GUILayout.BeginHorizontal();
 			{
 				if(GUILayout.Button("Back")) returnToPrevState = true;
+				GUILayout.Button(confirmOrderCaption);
 			}
 			GUILayout.EndHorizontal();
 		}
