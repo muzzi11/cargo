@@ -4,7 +4,7 @@ public class Balance
 
 	public Balance()
 	{
-		balance = 10000;
+		balance = 100;
 	}
 
 	public int GetBalance()
@@ -19,7 +19,7 @@ public class Balance
 
 	public bool withdraw(int cash)
 	{
-		if (balance - cash < 0) return false;
+		if (balance < cash) return false;
 
 		balance -= cash;
 		return true;

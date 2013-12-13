@@ -4,22 +4,22 @@ using System.Collections.Generic;
 public class OrderState : State
 {
 	private float quantity = 1.0f;
-	private State returnToState;
-
-	private string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel";
+	
 	private string nameCaption = "Name:",
 				   volumeCaption = "Volume:",
 				   weightCaption = "Weight:",
 				   priceCaption = "Price:",
-				   quantityCaption = "Quantity: x",
-		   		   totalPriceCaption = "Total price: $",
-				   balanceCaption = "Balance: $";
+				   quantityCaption = "<size=24>Quantity: x{0} </size>",
+				   balanceCaption = "<size=24>Balance: ${0} </size>";
 
-	public int width, height;
+	public string orderCaption, confirmOrderCaption, sumCaption;
+	public string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel";
+
+	public State returnToState;
+	public int width, height, orderValue;
 	public bool returnToPrevState;
 	public Order order;
 	public Balance balance;
-	public string orderCaption, confirmOrderCaption;
 
 	public OrderState(State returnToState, Balance balance)
 	{
@@ -29,7 +29,7 @@ public class OrderState : State
 		height = Screen.height;
 	}
 
-	public State UpdateState()
+	public virtual State UpdateState()
 	{	
 		if (returnToPrevState)
 		{
@@ -48,8 +48,6 @@ public class OrderState : State
 	{
 		GUILayout.BeginVertical();
 		{
-			int orderValue;
-
 			GUILayout.Space(40);
 
 			GUILayout.BeginHorizontal();
@@ -78,9 +76,9 @@ public class OrderState : State
 				orderValue = order.value * (int)quantity;
 				int remainder = UpdateBalance(orderValue);
 
-				GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
-				GUILayout.Label("<size=24>" + totalPriceCaption + orderValue + "</size>", normalLabel);
-				GUILayout.Label("<size=24>" + balanceCaption + remainder + "</size>", normalLabel);
+				GUILayout.Label(string.Format(quantityCaption, (int)quantity), normalLabel, GUILayout.ExpandWidth(true));
+				GUILayout.Label(string.Format(sumCaption, orderValue), normalLabel);
+				GUILayout.Label(string.Format(balanceCaption, remainder), normalLabel);
 			}
 			GUILayout.EndVertical();
 
