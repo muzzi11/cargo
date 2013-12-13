@@ -3,6 +3,17 @@ Cargo
 
 Cargo is a space oriented game for mobile platforms. The player tries to buy goods and sell them for more by transporting them to different systems. During your travels you will encounter hostile ships that are after your cargo, you can fend these ships off, call for back-up, drop your cargo or try to make a run for it.
 
+---------
+
+How to get it up and running
+---------
+
+- Clone the repository: git clone git@github.com:muzzi11/cargo.git
+- Download and install Unity from http://unity3d.com/
+- Open Unity and choose Open Project and browse to the Cargo folder inside the folder you just cloned
+- From the File menu select Build settings
+- Choose the desired platform to run on and click Build and Run
+
 Features
 --------
 - The game starts with a simple title screen.
