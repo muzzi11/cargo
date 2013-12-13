@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 public class AuctionHouseState : State 
 {
@@ -19,18 +18,18 @@ public class AuctionHouseState : State
 
 	private bool returnToPrevState = false;
 	private bool isBuying = true;
-	private bool orderPlaced = false;
+	public bool orderPlaced = false;
 
-	public AuctionHouseState(State returnToState)
+	public AuctionHouseState(State returnToState, Balance balance)
 	{
 		this.returnToState = returnToState;
-		buyState = new BuyState(this);
-		sellState = new SellState(this);
+		buyState = new BuyState(this, balance);
+		sellState = new SellState(this, balance);
 
 		width = Screen.width;
 		height = Screen.height;
 		table = new Table();
-		listener = new OrderListener();
+		listener = new OrderListener(this);
 		listener.Subscribe(table);
 
 		table.LoadData(
@@ -94,7 +93,7 @@ public class AuctionHouseState : State
 		{
 			GUILayout.Space(40);
 
-			orderPlaced = table.Render();
+			table.Render();
 
 			GUILayout.BeginHorizontal();
 			{
@@ -106,25 +105,3 @@ public class AuctionHouseState : State
 		GUILayout.EndVertical();			
 	}
 }
-
-public class Order : EventArgs
-{
-	public ItemStack stack;
-	public int value;
-}
-
-public class OrderListener
-{
-	public Order order;
-
-	public void Subscribe(Table table)
-	{
-		table.orderPlaced += new Table.OrderHandler (ReceivedOrder);
-	}
-
-	private void ReceivedOrder(Order order)
-	{
-		this.order = order;
-	}	
-}
-

@@ -3,23 +3,27 @@ using System.Collections.Generic;
 
 public class OrderState : State
 {
-	private int width, height;
 	private float quantity = 1.0f;
+	private State returnToState;
+
 	private string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel";
-	public string orderCaption, confirmOrderCaption;
 	private string nameCaption = "Name:",
 				   volumeCaption = "Volume:",
 				   weightCaption = "Weight:",
 				   priceCaption = "Price:",
 				   quantityCaption = "Quantity: x",
-		   		   totalPriceCaption = "Total price: $";
-	private State returnToState;
+		   		   totalPriceCaption = "Total price: $",
+				   balanceCaption = "Balance: $";
+
+	public int width, height;
+	public bool returnToPrevState;
 	public Order order;
+	public Balance balance;
+	public string orderCaption, confirmOrderCaption;
 
-	private bool returnToPrevState;
-
-	public OrderState(State returnToState)
+	public OrderState(State returnToState, Balance balance)
 	{
+		this.balance = balance;
 		this.returnToState = returnToState;
 		width = Screen.width;
 		height = Screen.height;
@@ -44,6 +48,8 @@ public class OrderState : State
 	{
 		GUILayout.BeginVertical();
 		{
+			int orderValue;
+
 			GUILayout.Space(40);
 
 			GUILayout.BeginHorizontal();
@@ -69,9 +75,12 @@ public class OrderState : State
 			GUILayout.BeginVertical();
 			{
 				quantity = GUILayout.HorizontalSlider(quantity, 1, order.stack.quantity);
-				int total = order.value * (int)quantity;
+				orderValue = order.value * (int)quantity;
+				int remainder = UpdateBalance(orderValue);
+
 				GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
-				GUILayout.Label("<size=24>" + totalPriceCaption + total + "</size>", normalLabel);
+				GUILayout.Label("<size=24>" + totalPriceCaption + orderValue + "</size>", normalLabel);
+				GUILayout.Label("<size=24>" + balanceCaption + remainder + "</size>", normalLabel);
 			}
 			GUILayout.EndVertical();
 
@@ -80,10 +89,19 @@ public class OrderState : State
 			GUILayout.BeginHorizontal();
 			{
 				if(GUILayout.Button("Back")) returnToPrevState = true;
-				GUILayout.Button(confirmOrderCaption);
+				if(GUILayout.Button(confirmOrderCaption)) ProcessTransaction(orderValue);
 			}
 			GUILayout.EndHorizontal();
 		}
 		GUILayout.EndVertical();
+	}
+
+	public virtual int UpdateBalance(int orderValue)
+	{
+		return orderValue;
+	}
+
+	public virtual void ProcessTransaction(int orderValue)
+	{
 	}
 }

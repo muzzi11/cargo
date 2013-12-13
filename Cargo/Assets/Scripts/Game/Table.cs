@@ -33,7 +33,7 @@ public class Table
 		}
 	}
 	
-	public bool Render()
+	public void Render()
 	{		
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 		{
@@ -50,7 +50,6 @@ public class Table
 							value = values[i]
 						};
 						orderPlaced(order);
-						return true;
 					}
 					GUILayout.Label(row[1], GUILayout.Width(50));
 					GUILayout.Label(row[2], GUILayout.Width(50));
@@ -59,7 +58,5 @@ public class Table
 			}
 		}
 		GUILayout.EndScrollView();
-
-		return false;
 	}
 }
