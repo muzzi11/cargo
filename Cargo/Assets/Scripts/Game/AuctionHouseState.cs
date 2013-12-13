@@ -29,7 +29,7 @@ public class AuctionHouseState : State
 
 		width = Screen.width;
 		height = Screen.height;
-		table = new Table(width);
+		table = new Table();
 		listener = new OrderListener();
 		listener.Subscribe(table);
 

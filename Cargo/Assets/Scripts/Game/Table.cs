@@ -13,7 +13,7 @@ public class Table
 	public event OrderHandler orderPlaced;
 	public delegate void OrderHandler(Order order);
 
-	public Table(int width)
+	public Table()
 	{
 		table = new List<List<string>>();
 	}

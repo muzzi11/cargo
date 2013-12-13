@@ -11,6 +11,7 @@ public class NavigationState : State
 
 	private AuctionHouseState auctionHouseState; 
 	private string inventoryCaption = "Inventory";
+	private string transparentStyle = "transparent";
 
 
 	public NavigationState(Space space, Ship ship)
@@ -31,17 +32,22 @@ public class NavigationState : State
 		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y);
 		worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
-		GUI.BeginGroup(new Rect(0, 0, width, 200));
+		GUILayout.BeginHorizontal();
 		{
-			if(GUI.Button(new Rect(0, 0, 128, 64), inventoryCaption)) return auctionHouseState;
+			if(GUILayout.Button(inventoryCaption))
+			{
+				return auctionHouseState;
+			}
+			else
+			{
+				if(GUI.Button(new Rect(0, 0, width, height), string.Empty, transparentStyle))
+				{
+					planetDestination = space.PlanetAt(worldPosition);
+					ship.Destination = worldPosition;
+				}
+			}
 		}
-		GUI.EndGroup();
-		
-		if(Input.GetMouseButtonDown(0))
-		{
-			planetDestination = space.PlanetAt(worldPosition);
-			ship.Destination = worldPosition;
-		}
+		GUILayout.EndHorizontal();
 
 		if (Event.current.type == EventType.Repaint)
 		{
@@ -53,5 +59,5 @@ public class NavigationState : State
 		}
 
 		return this;
-	}		
+	}
 }
