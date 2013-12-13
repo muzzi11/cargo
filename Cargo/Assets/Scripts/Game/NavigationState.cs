@@ -38,7 +38,7 @@ public class NavigationState : State
 		}
 		GUI.EndGroup();
 		
-		if(Input.GetMouseButtonUp(0))
+		if(Input.GetMouseButtonDown(0))
 		{
 			planetDestination = space.PlanetAt(worldPosition);
 			ship.Destination = worldPosition;
