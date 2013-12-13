@@ -68,7 +68,7 @@ public class OrderState : State
 
 			GUILayout.BeginVertical();
 			{
-				quantity = GUILayout.HorizontalSlider(quantity, 1, order.quantity);
+				quantity = GUILayout.HorizontalSlider(quantity, 1, order.item.Quantity);
 				int total = order.value * (int)quantity;
 				GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
 				GUILayout.Label("<size=24>" + totalPriceCaption + total + "</size>", normalLabel);
