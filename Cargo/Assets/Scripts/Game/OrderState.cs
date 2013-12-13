@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class OrderState : State
 {
 	private int width, height;
-	private float quantity = 0.0f;
+	private float quantity = 1.0f;
 	private string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel";
 	public string orderCaption, confirmOrderCaption;
 	private string nameCaption = "Name:",
@@ -64,7 +64,7 @@ public class OrderState : State
 			}
 			GUILayout.EndHorizontal();
 
-			quantity = GUILayout.HorizontalSlider(quantity, 0, order.quantity);
+			quantity = GUILayout.HorizontalSlider(quantity, 1, order.quantity);
 			int total = order.value * (int)quantity;
 			GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
 			GUILayout.Label("<size=24>" + totalPriceCaption + total + "</size>", normalLabel);
