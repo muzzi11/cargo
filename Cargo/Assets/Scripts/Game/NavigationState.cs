@@ -13,12 +13,11 @@ public class NavigationState : State
 	private string inventoryCaption = "Inventory";
 	private string transparentStyle = "transparent";
 
-
-	public NavigationState(Space space, Ship ship)
+	public NavigationState(Space space, Ship ship, Balance balance)
 	{
+		this.auctionHouseState = new AuctionHouseState(this, balance);
 		screenPosition = new Vector2();
 		worldPosition = new Vector2();
-		auctionHouseState = new AuctionHouseState(this);
 
 		width = Screen.width;
 		height = Screen.height;

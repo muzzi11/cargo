@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 public class AuctionHouseState : State 
 {
@@ -19,34 +18,46 @@ public class AuctionHouseState : State
 
 	private bool returnToPrevState = false;
 	private bool isBuying = true;
-	private bool orderPlaced = false;
+	public bool orderPlaced = false;
 
-	public AuctionHouseState(State returnToState)
+	public AuctionHouseState(State returnToState, Balance balance)
 	{
 		this.returnToState = returnToState;
-		buyState = new BuyState(this);
-		sellState = new SellState(this);
+		buyState = new BuyState(this, balance);
+		sellState = new SellState(this, balance);
 
 		width = Screen.width;
 		height = Screen.height;
 		table = new Table();
-		listener = new OrderListener();
+		listener = new OrderListener(this);
 		listener.Subscribe(table);
 
 		table.LoadData(
-			new List<Item>()
+			new List<ItemStack>()
 			{
-				new Item()
+				new ItemStack()
 				{
-					ID = 1, Name = "Iron ore", Quantity = 123
+					item = new Item()
+					{
+						ID = 1, name = "Iron ore", weight = 50, volume = 29
+					},
+					quantity = 123
 				},
-				new Item()
+				new ItemStack()
 				{
-					ID = 2, Name = "Adamantium", Quantity = 42
+					item = new Item()
+					{
+						ID = 2, name = "Adamantium", weight = 29, volume = 92
+					},
+					quantity = 123
 				},
-				new Item()
+				new ItemStack()
 				{
-					ID = 3, Name = "Vibranium", Quantity = 31
+					item = new Item()
+					{
+						ID = 3, name = "Vibranium", weight = 134, volume = 2
+					},
+					quantity = 34
 				}
 			},
 			new List<int>()
@@ -82,7 +93,7 @@ public class AuctionHouseState : State
 		{
 			GUILayout.Space(40);
 
-			orderPlaced = table.Render();
+			table.Render();
 
 			GUILayout.BeginHorizontal();
 			{
@@ -94,25 +105,3 @@ public class AuctionHouseState : State
 		GUILayout.EndVertical();			
 	}
 }
-
-public class Order : EventArgs
-{
-	public Item item;
-	public int value;
-}
-
-public class OrderListener
-{
-	public Order order;
-
-	public void Subscribe(Table table)
-	{
-		table.orderPlaced += new Table.OrderHandler (ReceivedOrder);
-	}
-
-	private void ReceivedOrder(Order order)
-	{
-		this.order = order;
-	}	
-}
-

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class Table
 {
 	private List<List<string>> table;
-	private List<Item> items;
+	private List<ItemStack> stacks;
 	private List<int> values;
 
 	private Vector2 scrollPosition;
@@ -17,23 +17,23 @@ public class Table
 		table = new List<List<string>>();
 	}
 	
-	public void LoadData(List<Item> items, List<int> values)
+	public void LoadData(List<ItemStack> stacks, List<int> values)
 	{
-		this.items = items;
+		this.stacks = stacks;
 		this.values = values;
 
-		for(int i = 0; i < items.Count; ++i)
+		for(int i = 0; i < stacks.Count; ++i)
 		{			
 			table.Add(new List<string>()
 			{
-				items[i].Name,
-				'x' + items[i].Quantity.ToString(),
+				stacks[i].item.name,
+				'x' + stacks[i].quantity.ToString(),
 				'$' + values[i].ToString()
 			});
 		}
 	}
 	
-	public bool Render()
+	public void Render()
 	{		
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 		{
@@ -46,11 +46,10 @@ public class Table
 				    {
 						Order order = new Order()
 						{
-							item = items[i],
+							stack = stacks[i],
 							value = values[i]
 						};
 						orderPlaced(order);
-						return true;
 					}
 					GUILayout.Label(row[1], GUILayout.Width(50));
 					GUILayout.Label(row[2], GUILayout.Width(50));
@@ -59,7 +58,5 @@ public class Table
 			}
 		}
 		GUILayout.EndScrollView();
-
-		return false;
 	}
 }

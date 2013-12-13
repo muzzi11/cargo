@@ -8,6 +8,7 @@ public class Game : MonoBehaviour
 
 	private Ship ship;
 	private Space space;
+	private Balance balance;
 	private State currentState;
 	private GameObject playerNode;
 
@@ -16,7 +17,8 @@ public class Game : MonoBehaviour
 	{
 		ship = new Ship(new Vector2(15, 15));
 		space = GameObject.Find("Space").GetComponent<Space>();
-		currentState = new NavigationState(space, ship);
+		balance = new Balance();
+		currentState = new NavigationState(space, ship, balance);
 		playerNode = GameObject.Find("Player Node");
 	}
 	
