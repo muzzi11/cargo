@@ -6,25 +6,7 @@ public class Order : EventArgs
 	public int value;
 }
 
-public class OrderListener
+public interface OrderListener
 {
-	private AuctionHouseState state;
-	
-	public Order order;
-	
-	public OrderListener(AuctionHouseState state)
-	{
-		this.state = state;
-	}
-	
-	public void Subscribe(Table table)
-	{
-		table.orderPlaced += new Table.OrderHandler (ReceivedOrder);
-	}
-	
-	private void ReceivedOrder(Order order)
-	{
-		this.order = order;
-		state.orderPlaced = true;
-	}	
+	void ReceivedOrder(Order order);
 }

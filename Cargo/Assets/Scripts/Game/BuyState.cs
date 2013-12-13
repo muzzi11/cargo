@@ -5,23 +5,15 @@ public class BuyState : OrderState
 	private string insufficientFundsCaption = "Insufficient funds!";
 	private string dollazShortCaption = "<size=24>You are {0} dollaz short.</size>";
 	private bool sufficientFunds = true;
+	private int orderValue;
 
 	public BuyState(State returnToState, Balance balance) : base(returnToState, balance)
 	{
 		orderCaption = "Buying {0}";
 		placeOrder = "Buy";
 		sumCaption = "<size=24>Total cost: ${0}</size>";
+		confirmOrderCaption = "<size=24>Are you sure you want to buy {0} {1}?</size>";
 	}
-
-	public override int UpdateBalance(int orderValue)
-	{
-		return balance.GetBalance() - orderValue;
-	}
-
-	public override void ProcessTransaction(int orderValue)
-	{
-		sufficientFunds = returnToPrevState = balance.withdraw(orderValue);
-	}	
 
 	public override State UpdateState()
 	{	
@@ -30,16 +22,27 @@ public class BuyState : OrderState
 			returnToPrevState = false;
 			return returnToState;
 		}
-
-		if(orderPlaced) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
+		
 		if(!sufficientFunds) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), FailWindow, insufficientFundsCaption);
-
-		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
-
+		if(orderPlaced) GUI.ModalWindow(2, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
+		
+		if(order != null) GUI.Window(3, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
+		
 		return this;
 	}
 
-	public void FailWindow(int ID)
+	protected override int UpdateBalance(int orderValue)
+	{
+		return balance.GetBalance() - orderValue;
+	}
+
+	protected override void ProcessTransaction(int orderValue)
+	{
+		this.orderValue = orderValue;
+		sufficientFunds = returnToPrevState = balance.withdraw(orderValue);
+	}
+
+	private void FailWindow(int ID)
 	{
 		int toShort = orderValue - balance.GetBalance();
 		

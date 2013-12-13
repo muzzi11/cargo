@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class OrderState : State
+public abstract class OrderState : State
 {
 	private float quantity = 1.0f;
-	
+	private int orderValue;
+
 	private string nameCaption = "Name:",
 				   volumeCaption = "Volume:",
 				   weightCaption = "Weight:",
@@ -12,16 +13,17 @@ public class OrderState : State
 				   quantityCaption = "<size=24>Quantity: x{0} </size>",
 				   balanceCaption = "<size=24>Balance: ${0} </size>";
 
-	public string orderCaption, placeOrder, sumCaption;
-	public string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel",
-				  confirmationCaption = "Please confirm your transaction.";
+	protected string orderCaption, placeOrder, sumCaption, confirmOrderCaption;
+	protected string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel",
+				     confirmationCaption = "Please confirm your transaction.";
 
-	public State returnToState;
-	public int width, height, orderValue;
-	public bool returnToPrevState, orderPlaced = false;
+	protected State returnToState;
+	protected int width, height;
+	protected bool returnToPrevState, orderPlaced = false;
+	protected Balance balance;
+
 	public Order order;
-	public Balance balance;
-
+	
 	public OrderState(State returnToState, Balance balance)
 	{
 		this.balance = balance;
@@ -30,22 +32,11 @@ public class OrderState : State
 		height = Screen.height;
 	}
 
-	public virtual State UpdateState()
-	{	
-		if (returnToPrevState)
-		{
-			returnToPrevState = false;
-			return returnToState;
-		}
+	abstract public State UpdateState ();
+	abstract protected int UpdateBalance(int orderValue);	
+	abstract protected void ProcessTransaction(int orderValue);
 
-		if (orderPlaced) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
-
-		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
-
-		return this;
-	}
-
-	public void TransactionWindow(int ID)
+	protected void TransactionWindow(int ID)
 	{
 		GUILayout.BeginVertical();
 		{
@@ -95,26 +86,23 @@ public class OrderState : State
 		GUILayout.EndVertical();
 	}
 
-	public void ConfirmationWindow(int ID)
+	protected void ConfirmationWindow(int ID)
 	{
 		GUILayout.FlexibleSpace();
 		
 		GUILayout.BeginVertical();
 		{
-			GUILayout.Space(40);			
+			GUILayout.Space(40);	
+			GUILayout.Label(string.Format(confirmOrderCaption, (int)quantity, order.stack.item.name), normalLabel);
 			GUILayout.FlexibleSpace();
-			
-			if(GUILayout.Button("Back")) orderPlaced = false;
+
+			GUILayout.BeginHorizontal();
+			{
+				if(GUILayout.Button("Back")) orderPlaced = false;
+				if(GUILayout.Button(placeOrder)) ProcessTransaction(orderValue);
+			}
+			GUILayout.EndHorizontal();
 		}
 		GUILayout.EndVertical();
-	}
-
-	public virtual int UpdateBalance(int orderValue)
-	{
-		return orderValue;
-	}
-
-	public virtual void ProcessTransaction(int orderValue)
-	{
 	}
 }

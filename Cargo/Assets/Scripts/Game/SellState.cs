@@ -4,18 +4,33 @@ public class SellState : OrderState
 {
 	public SellState(State returnToState, Balance balance) : base(returnToState, balance)
 	{
-		this.balance = balance;
 		orderCaption = "Selling ";
 		placeOrder = "Sell";
 		sumCaption = "<size=24>Profits: ${0}</size>";
+		confirmOrderCaption = "<size=24>Are you sure you want to sell {0} {1}?</size>";
 	}
-	
-	public override int UpdateBalance(int orderValue)
+
+	public override State UpdateState ()
+	{
+		if (returnToPrevState)
+		{
+			returnToPrevState = false;
+			return returnToState;
+		}
+		
+		if (orderPlaced) GUI.ModalWindow(4, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
+		
+		if(order != null) GUI.Window(5, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
+		
+		return this;
+	}
+
+	protected override int UpdateBalance(int orderValue)
 	{
 		return balance.GetBalance() + orderValue;
 	}
 	
-	public override void ProcessTransaction(int orderValue)
+	protected override void ProcessTransaction(int orderValue)
 	{
 		balance.deposit(orderValue);
 		returnToPrevState = true;

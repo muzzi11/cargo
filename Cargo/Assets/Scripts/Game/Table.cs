@@ -8,12 +8,11 @@ public class Table
 	private List<int> values;
 
 	private Vector2 scrollPosition;
+	private OrderListener listener;
 
-	public event OrderHandler orderPlaced;
-	public delegate void OrderHandler(Order order);
-
-	public Table()
+	public Table(OrderListener listener)
 	{
+		this.listener = listener;
 		table = new List<List<string>>();
 	}
 	
@@ -49,7 +48,7 @@ public class Table
 							stack = stacks[i],
 							value = values[i]
 						};
-						orderPlaced(order);
+						listener.ReceivedOrder(order);
 					}
 					GUILayout.Label(row[1], GUILayout.Width(50));
 					GUILayout.Label(row[2], GUILayout.Width(50));

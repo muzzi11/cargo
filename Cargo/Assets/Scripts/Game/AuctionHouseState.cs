@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class AuctionHouseState : State 
+public class AuctionHouseState : State, OrderListener
 {
 	private int width, height;
 
@@ -14,7 +14,7 @@ public class AuctionHouseState : State
 	private string auctionHouseCaption = "Auction house";
 
 	private Table table;
-	private OrderListener listener;
+	private Order order;
 
 	private bool returnToPrevState = false;
 	private bool isBuying = true;
@@ -28,9 +28,7 @@ public class AuctionHouseState : State
 
 		width = Screen.width;
 		height = Screen.height;
-		table = new Table();
-		listener = new OrderListener(this);
-		listener.Subscribe(table);
+		table = new Table(this);
 
 		table.LoadData(
 			new List<ItemStack>()
@@ -78,7 +76,7 @@ public class AuctionHouseState : State
 		if (orderPlaced)
 		{
 			orderPlaced = false;
-			sellState.order = buyState.order = listener.order;
+			sellState.order = buyState.order = order;
 			return isBuying ? (State)buyState : (State)sellState;
 		}
 		
@@ -103,5 +101,11 @@ public class AuctionHouseState : State
 			GUILayout.EndHorizontal();
 		}
 		GUILayout.EndVertical();			
+	}
+
+	public void ReceivedOrder(Order order)
+	{
+		orderPlaced = true;
+		this.order = order;
 	}
 }
