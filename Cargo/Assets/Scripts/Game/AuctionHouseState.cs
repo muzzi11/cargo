@@ -47,7 +47,7 @@ public class AuctionHouseState : State
 				new Item()
 				{
 					ID = 3, Name = "Vibranium", Quantity = 31
-				}				
+				}
 			},
 			new List<int>()
 			{
