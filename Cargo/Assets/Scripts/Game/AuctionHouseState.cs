@@ -1,88 +1,61 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class AuctionHouseState : State 
 {
 	private int width, height;
 
 	private State returnToState;
+	private BuyState buyState;
+	private SellState sellState;
 
 	private string buyCaption = "Buy";
 	private string sellCaption = "Sell";
-	private string quantityCaption = "Quantity";
 	private string auctionHouseCaption = "Auction house";
 
 	private Table table;
-	
+	private OrderListener listener;
+
 	private bool returnToPrevState = false;
 	private bool isBuying = true;
-	
+	private bool orderPlaced = false;
+
 	public AuctionHouseState(State returnToState)
 	{
 		this.returnToState = returnToState;
+		buyState = new BuyState(this);
+		sellState = new SellState(this);
+
 		width = Screen.width;
 		height = Screen.height;
 		table = new Table(width);
-		
+		listener = new OrderListener();
+		listener.Subscribe(table);
+
 		table.LoadData(
 			new List<Item>()
 			{
 				new Item()
 				{
-					Name = "Iron ore"
+					ID = 1, Name = "Iron ore"
 				},
 				new Item()
 				{
-					Name = "Adamantium"
+					ID = 2, Name = "Adamantium"
 				},
 				new Item()
 				{
-					Name = "Vibranium"
-				},
-				new Item()
-				{
-					Name = "Iron ore"
-				},
-				new Item()
-				{
-					Name = "Adamantium"
-				},
-				new Item()
-				{
-					Name = "Vibranium"
-				},
-				new Item()
-				{
-					Name = "Iron ore"
-				},
-				new Item()
-				{
-					Name = "Adamantium"
-				},
-				new Item()
-				{
-					Name = "Vibranium"
-				},
-				new Item()
-				{
-					Name = "Iron ore"
-				},
-				new Item()
-				{
-					Name = "Adamantium"
-				},
-				new Item()
-				{
-					Name = "Vibranium"
-				},
+					ID = 3, Name = "Vibranium"
+				}				
 			},
 			new List<int>()
 			{
-				167, 13, 24,167, 13, 24,167, 13, 24,167, 13, 24,
+				167, 13, 24
 			},
 			new List<int>()
 			{
-				12, 45, 137,12, 45, 137,12, 45, 137,12, 45, 137,
+				12, 45, 137
 			}
 		);
 	}
@@ -93,6 +66,13 @@ public class AuctionHouseState : State
 		{
 			returnToPrevState = false;
 			return returnToState;
+		}
+
+		if (orderPlaced)
+		{
+			orderPlaced = false;
+			buyState.order = listener.order;
+			return isBuying ? (State)buyState : (State)sellState;
 		}
 		
 		GUI.Window(0, new Rect(0, 0, width, height), AuctionHouseWindow, auctionHouseCaption);
@@ -106,7 +86,7 @@ public class AuctionHouseState : State
 		{
 			GUILayout.Space(40);
 
-			table.Render();
+			orderPlaced = table.Render();
 
 			GUILayout.BeginHorizontal();
 			{
@@ -118,3 +98,25 @@ public class AuctionHouseState : State
 		GUILayout.EndVertical();			
 	}
 }
+
+public class Order : EventArgs
+{
+	public Item item;
+	public int quantity;
+}
+
+public class OrderListener
+{
+	public Order order;
+
+	public void Subscribe(Table table)
+	{
+		table.orderPlaced += new Table.OrderHandler (ReceivedOrder);
+	}
+
+	private void ReceivedOrder(Order order)
+	{
+		this.order = order;
+	}	
+}
+
