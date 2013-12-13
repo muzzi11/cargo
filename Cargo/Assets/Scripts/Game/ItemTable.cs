@@ -27,7 +27,7 @@ struct ItemMaterial
 	}
 }
 
-public static class ItemFactory
+public static class ItemTable
 {
 	private static readonly ItemMaterialQuality[] qualities = new ItemMaterialQuality[]
 	{
@@ -58,11 +58,28 @@ public static class ItemFactory
 		return id >> 8;
 	}
 
+	public static string GetName(int id)
+	{
+		int q = GetQualityIndex(id), m = GetMaterialIndex(id);
+
+		return qualities[q].name + " " + materials[m].name;
+	}
+
 	public static int GetBaseValue(int id)
 	{
 		int q = GetQualityIndex(id), m = GetMaterialIndex(id);
 
 		return Mathf.RoundToInt(qualities[q].valueMultiplier * materials[m].value);
+	}
+
+	public static int GetWeight(int id)
+	{
+		return materials[GetMaterialIndex(id)].weight;
+	}
+
+	public static int GetVolume(int id)
+	{
+		return materials[GetMaterialIndex(id)].volume;
 	}
 
 	public static Item GenerateRandomItem()
@@ -71,11 +88,24 @@ public static class ItemFactory
 		int q = Random.Range(0, qualities.Length);
 		int m = Random.Range(0, materials.Length);
 
-		item.Name = qualities[q].name + " " + materials[m].name;
-		item.Volume = materials[m].volume;
-		item.Weight = materials[m].weight;
-		item.ID = GetID(q, m);
+		item.id = GetID(q, m);
+		item.name = GetName(item.id);
 
 		return item;
+	}
+
+	public static List<int> GetItemIDs()
+	{
+		var list = new List<int>();
+
+		for(int q = 0; q < qualities.Length; ++q)
+		{
+			for(int m = 0; m < materials.Length; ++m)
+			{
+				list.Add(GetID(q, m));
+			}
+		}
+
+		return list;
 	}
 }

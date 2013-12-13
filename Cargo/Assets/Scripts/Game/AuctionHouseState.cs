@@ -39,7 +39,7 @@ public class AuctionHouseState : State
 				{
 					item = new Item()
 					{
-						ID = 1, name = "Iron ore", weight = 50, volume = 29
+						id = 1, name = "Iron ore", weight = 50, volume = 29
 					},
 					quantity = 123
 				},
@@ -47,7 +47,7 @@ public class AuctionHouseState : State
 				{
 					item = new Item()
 					{
-						ID = 2, name = "Adamantium", weight = 29, volume = 92
+						id = 2, name = "Adamantium", weight = 29, volume = 92
 					},
 					quantity = 123
 				},
@@ -55,7 +55,7 @@ public class AuctionHouseState : State
 				{
 					item = new Item()
 					{
-						ID = 3, name = "Vibranium", weight = 134, volume = 2
+						id = 3, name = "Vibranium", weight = 134, volume = 2
 					},
 					quantity = 34
 				}

@@ -1,12 +1,36 @@
 ﻿using UnityEngine;
 
+public struct IDQuantityPair
+{
+	public int id, quantity;
+
+	public IDQuantityPair(int id, int quantity)
+	{
+		this.id = id;
+		this.quantity = quantity;
+	}
+}
+
 public class Item
 {
-	public int ID;
+	public int id;
 	public string name;
-	public float volume;
-	public float weight;	
-	public int baseValue;
+
+	public int Volume
+	{
+		get
+		{
+			return ItemTable.GetVolume(id);
+		}
+	}
+
+	public int Weight
+	{
+		get
+		{
+			return ItemTable.GetWeight(id);
+		}
+	}
 }
 
 public class ItemStack
