@@ -6,6 +6,7 @@ public class Table
 	private List<List<string>> table;
 	private List<Item> items;
 	private List<int> quantities;
+	private List<int> values;
 
 	private Vector2 scrollPosition;
 
@@ -21,7 +22,7 @@ public class Table
 	{
 		this.items = items;
 		this.quantities = quantities;
-
+		this.values = values;
 		for(int i = 0; i < items.Count; ++i)
 		{			
 			table.Add(new List<string>()
@@ -47,7 +48,8 @@ public class Table
 						Order order = new Order()
 						{
 							item = items[i],
-							quantity = quantities[i]
+							quantity = quantities[i],
+							value = values[i]
 						};
 						orderPlaced(order);
 						return true;

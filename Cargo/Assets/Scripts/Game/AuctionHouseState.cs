@@ -71,7 +71,7 @@ public class AuctionHouseState : State
 		if (orderPlaced)
 		{
 			orderPlaced = false;
-			buyState.order = listener.order;
+			sellState.order = buyState.order = listener.order;
 			return isBuying ? (State)buyState : (State)sellState;
 		}
 		
@@ -103,6 +103,7 @@ public class Order : EventArgs
 {
 	public Item item;
 	public int quantity;
+	public int value;
 }
 
 public class OrderListener
