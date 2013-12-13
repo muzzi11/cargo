@@ -6,4 +6,5 @@ public class Item
 	public string Name;
 	public float Volume;
 	public float Weight;	
+	public int Quantity;
 }

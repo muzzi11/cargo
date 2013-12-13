@@ -38,20 +38,16 @@ public class AuctionHouseState : State
 			{
 				new Item()
 				{
-					ID = 1, Name = "Iron ore"
+					ID = 1, Name = "Iron ore", Quantity = 123
 				},
 				new Item()
 				{
-					ID = 2, Name = "Adamantium"
+					ID = 2, Name = "Adamantium", Quantity = 42
 				},
 				new Item()
 				{
-					ID = 3, Name = "Vibranium"
+					ID = 3, Name = "Vibranium", Quantity = 31
 				}				
-			},
-			new List<int>()
-			{
-				167, 13, 24
 			},
 			new List<int>()
 			{
@@ -102,7 +98,6 @@ public class AuctionHouseState : State
 public class Order : EventArgs
 {
 	public Item item;
-	public int quantity;
 	public int value;
 }
 
