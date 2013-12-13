@@ -26,7 +26,7 @@ public class Table
 	
 	public void Render()
 	{		
-		scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.Height(200));
+		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 		{
 			foreach(List<string> row in table)
 			{
