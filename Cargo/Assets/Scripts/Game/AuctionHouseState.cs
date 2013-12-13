@@ -14,6 +14,10 @@ public class AuctionHouseState : State
 	private string buttonStyle = "hudButton";
 	private Table table;
 	
+	private float paddingTop = 60, paddingLeft = 5, paddingBottom = 10;
+	private float buttonAreaHeight = 40;
+	private float tableHeight;
+	
 	private bool returnToPrevState = false;
 	private bool isBuying = true;
 	
@@ -22,9 +26,10 @@ public class AuctionHouseState : State
 		this.returnToState = returnToState;
 		screenWidth = Screen.width;
 		screenHeight = Screen.height;
-		windowWidth = screenWidth *0.8f;
-		windowHeight = screenHeight *0.7f;
-		table = new Table((int)windowWidth, (int)windowHeight - 110);
+		windowWidth = screenWidth;
+		windowHeight = screenHeight;
+		tableHeight = windowHeight - (buttonAreaHeight + paddingTop + paddingBottom);
+		table = new Table((int)windowWidth, (int)tableHeight);
 		
 		table.LoadData(
 			new List<Item>()
@@ -97,19 +102,19 @@ public class AuctionHouseState : State
 			return returnToState;
 		}
 		
-		GUI.Window(0, new Rect(screenWidth / 2 - windowWidth /2, screenHeight *0.1f, windowWidth, windowHeight), AuctionHouseWindow, auctionHouseCaption);		
+		GUI.Window(0, new Rect(screenWidth / 2 - windowWidth /2, 0, windowWidth, windowHeight), AuctionHouseWindow, auctionHouseCaption);		
 		return this;
 	}
 	
 	public void AuctionHouseWindow(int ID)
 	{	
-		GUILayout.BeginArea(new Rect(5, 60, windowWidth, windowHeight - 110));
+		GUILayout.BeginArea(new Rect(paddingLeft, paddingTop, windowWidth, tableHeight));
 		{
 			table.Render();
 		}
 		GUILayout.EndArea();				
 		
-		GUILayout.BeginArea(new Rect(5, windowHeight-50, windowWidth, 40));
+		GUILayout.BeginArea(new Rect(paddingLeft, windowHeight-(buttonAreaHeight+paddingBottom), windowWidth, buttonAreaHeight));
 		{
 			if(GUI.Button(new Rect(0, 0, windowWidth/2, 40),"Back")) returnToPrevState = true;
 			

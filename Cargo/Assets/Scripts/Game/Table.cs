@@ -10,6 +10,7 @@ public class Table
 	
 	public Table(int width, int height)
 	{
+		//Compensate for scrollbar width
 		this.width = width - 10;
 		this.height = height;
 		
@@ -47,7 +48,7 @@ public class Table
 			
 			foreach(string cell in row)	
 			{		
-				GUILayout.Label(cell, GUILayout.Width(width * colWidth[counter]));
+				GUILayout.Label(cell, GUILayout.Width(width * colWidth[counter]));									
 				++counter;
 			}
 			GUILayout.EndHorizontal();			
