@@ -34,20 +34,32 @@ public class AuctionHouseState : State
 		listener.Subscribe(table);
 
 		table.LoadData(
-			new List<Item>()
+			new List<ItemStack>()
 			{
-				new Item()
+				new ItemStack()
 				{
-					ID = 1, Name = "Iron ore", Quantity = 123
+					item = new Item()
+					{
+						ID = 1, name = "Iron ore", weight = 50, volume = 29
+					},
+					quantity = 123
 				},
-				new Item()
+				new ItemStack()
 				{
-					ID = 2, Name = "Adamantium", Quantity = 42
+					item = new Item()
+					{
+						ID = 2, name = "Adamantium", weight = 29, volume = 92
+					},
+					quantity = 123
 				},
-				new Item()
+				new ItemStack()
 				{
-					ID = 3, Name = "Vibranium", Quantity = 31
-				}				
+					item = new Item()
+					{
+						ID = 3, name = "Vibranium", weight = 134, volume = 2
+					},
+					quantity = 34
+				}															
 			},
 			new List<int>()
 			{
@@ -97,7 +109,7 @@ public class AuctionHouseState : State
 
 public class Order : EventArgs
 {
-	public Item item;
+	public ItemStack stack;
 	public int value;
 }
 

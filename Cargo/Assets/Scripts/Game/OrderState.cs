@@ -35,7 +35,7 @@ public class OrderState : State
 
 		if (order != null)
 		{
-			GUI.Window(0, new Rect(0, 0, width, height), BuyWindow, orderCaption + order.item.Name);
+			GUI.Window(0, new Rect(0, 0, width, height), BuyWindow, orderCaption + order.stack.item.name);
 		}
 		return this;
 	}
@@ -57,9 +57,9 @@ public class OrderState : State
 
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(order.item.Name, leftAlignedLabel, GUILayout.ExpandWidth(true));
-				GUILayout.Label(order.item.Volume.ToString(), GUILayout.Width(65));
-				GUILayout.Label(order.item.Weight.ToString(), GUILayout.Width(65));
+				GUILayout.Label(order.stack.item.name, leftAlignedLabel, GUILayout.ExpandWidth(true));
+				GUILayout.Label(order.stack.item.volume.ToString(), GUILayout.Width(65));
+				GUILayout.Label(order.stack.item.weight.ToString(), GUILayout.Width(65));
 				GUILayout.Label("$" + order.value.ToString(), GUILayout.Width(55));
 			}
 			GUILayout.EndHorizontal();
@@ -68,7 +68,7 @@ public class OrderState : State
 
 			GUILayout.BeginVertical();
 			{
-				quantity = GUILayout.HorizontalSlider(quantity, 1, order.item.Quantity);
+				quantity = GUILayout.HorizontalSlider(quantity, 1, order.stack.quantity);
 				int total = order.value * (int)quantity;
 				GUILayout.Label("<size=24>" + quantityCaption + (int)quantity + "</size>", normalLabel, GUILayout.ExpandWidth(true));
 				GUILayout.Label("<size=24>" + totalPriceCaption + total + "</size>", normalLabel);
