@@ -2,25 +2,25 @@ using UnityEngine;
 
 public class SellState : OrderState
 {
-	public SellState(State returnToState, Balance balance) : base(returnToState, balance)
+	public SellState(State returnToState, Balance balance, Order order) : base(returnToState, balance, order)
 	{
 		orderCaption = "Selling ";
 		placeOrder = "Sell";
 		sumCaption = "<size=24>Profits: ${0}</size>";
 		confirmOrderCaption = "<size=24>Are you sure you want to sell {0} {1}?</size>";
 	}
-
-	public override State UpdateState ()
-	{
+	
+	public override State UpdateState()
+	{	
 		if (returnToPrevState)
 		{
 			returnToPrevState = false;
 			return returnToState;
 		}
 		
-		if (orderPlaced) GUI.ModalWindow(4, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
+		if (orderPlaced) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmationCaption);
 		
-		if(order != null) GUI.Window(5, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.stack.item.name));
+		if(order != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(orderCaption, order.name));
 		
 		return this;
 	}

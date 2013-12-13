@@ -35,7 +35,7 @@ public class NavigationState : State
 		{
 			if(GUILayout.Button(inventoryCaption))
 			{
-				return auctionHouseState;
+				return this;
 			}
 			else
 			{
@@ -52,6 +52,7 @@ public class NavigationState : State
 		{
 			if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))
 			{
+				auctionHouseState.LoadEconomy(planetDestination.economy);
 				planetDestination = null;
 				return auctionHouseState;			
 			}
