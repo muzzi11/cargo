@@ -8,3 +8,6 @@ Cargo.userprefs
 *.csproj
 *.unityproj
 *.sln
+
+.userprefs
+.meta
