@@ -10,8 +10,7 @@ public class NavigationState : State
 	private Vector2 screenPosition, worldPosition;
 
 	private AuctionHouseState auctionHouseState; 
-	private string inventoryCaption = "Inventory";	
-	private string buttonStyle = "hudButton";
+	private string inventoryCaption = "Inventory";
 
 
 	public NavigationState(Space space, Ship ship)

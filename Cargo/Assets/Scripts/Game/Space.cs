@@ -24,7 +24,6 @@ public class Space : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-	
 	}
 
 	// Returns the planet at the given position, if it's within the planet's radius, otherwise returns null.

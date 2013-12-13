@@ -3,20 +3,16 @@ using System.Collections.Generic;
 
 public class AuctionHouseState : State 
 {
-	private int screenWidth, screenHeight;
-	private float windowWidth, windowHeight;		
+	private int width, height;
+
 	private State returnToState;
+
 	private string buyCaption = "Buy";
 	private string sellCaption = "Sell";
-	private string currentCaption;
 	private string quantityCaption = "Quantity";
 	private string auctionHouseCaption = "Auction house";
-	private string buttonStyle = "hudButton";
+
 	private Table table;
-	
-	private float paddingTop = 60, paddingLeft = 5, paddingBottom = 10;
-	private float buttonAreaHeight = 40;
-	private float tableHeight;
 	
 	private bool returnToPrevState = false;
 	private bool isBuying = true;
@@ -24,12 +20,9 @@ public class AuctionHouseState : State
 	public AuctionHouseState(State returnToState)
 	{
 		this.returnToState = returnToState;
-		screenWidth = Screen.width;
-		screenHeight = Screen.height;
-		windowWidth = screenWidth;
-		windowHeight = screenHeight;
-		tableHeight = windowHeight - (buttonAreaHeight + paddingTop + paddingBottom);
-		table = new Table((int)windowWidth, (int)tableHeight);
+		width = Screen.width;
+		height = Screen.height;
+		table = new Table(width);
 		
 		table.LoadData(
 			new List<Item>()
@@ -102,26 +95,26 @@ public class AuctionHouseState : State
 			return returnToState;
 		}
 		
-		GUI.Window(0, new Rect(screenWidth / 2 - windowWidth /2, 0, windowWidth, windowHeight), AuctionHouseWindow, auctionHouseCaption);		
+		GUI.Window(0, new Rect(0, 0, width, height), AuctionHouseWindow, auctionHouseCaption);
+
 		return this;
 	}
 	
 	public void AuctionHouseWindow(int ID)
-	{	
-		GUILayout.BeginArea(new Rect(paddingLeft, paddingTop, windowWidth, tableHeight));
+	{
+		GUILayout.BeginVertical();
 		{
+			GUILayout.Space(40);
+
 			table.Render();
+
+			GUILayout.BeginHorizontal();
+			{
+				if(GUILayout.Button("Back")) returnToPrevState = true;
+				if(GUILayout.Button(isBuying ? buyCaption : sellCaption)) isBuying = !isBuying;
+			}
+			GUILayout.EndHorizontal();
 		}
-		GUILayout.EndArea();				
-		
-		GUILayout.BeginArea(new Rect(paddingLeft, windowHeight-(buttonAreaHeight+paddingBottom), windowWidth, buttonAreaHeight));
-		{
-			if(GUI.Button(new Rect(0, 0, windowWidth/2, 40),"Back")) returnToPrevState = true;
-			
-			currentCaption = isBuying ? buyCaption : sellCaption;
-			if(GUI.Button(new Rect(windowWidth/2, 0, windowWidth/2, 40),currentCaption)) 
-				isBuying = (isBuying) ? false : true;			
-		}
-		GUILayout.EndArea();				
+		GUILayout.EndVertical();			
 	}
 }
