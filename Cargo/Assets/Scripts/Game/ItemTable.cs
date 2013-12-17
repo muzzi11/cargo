@@ -1,111 +1,65 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-struct ItemMaterialQuality
+public interface ItemTableListener
 {
-	public readonly string name;
-	public readonly float valueMultiplier;
-
-	public ItemMaterialQuality(string name, float valueMultiplier)
-	{
-		this.name = name;
-		this.valueMultiplier = valueMultiplier;
-	}
+	void ItemClicked(Item item);
 }
 
-struct ItemMaterial
+public class ItemTable
 {
-	public readonly string name;
-	public readonly int weight, volume, value;
+	private const string tableItemStyle = "tableItem";
 
-	public ItemMaterial(string name, int weight, int volume, int value)
+	private List<string[]> table = new List<string[]>();
+	private List<Item> items = new List<Item>();
+
+	private List<ItemTableListener> listeners = new List<ItemTableListener>();
+
+	private Vector2 scrollPosition;
+
+	public void AddListener(ItemTableListener listener)
 	{
-		this.name = name;
-		this.weight = weight;
-		this.volume = volume;
-		this.value = value;
+		listeners.Add(listener);
 	}
-}
-
-public static class ItemTable
-{
-	private static readonly ItemMaterialQuality[] qualities = new ItemMaterialQuality[]
+	
+	public void LoadData(List<Item> items, List<int> quantities, List<int> values)
 	{
-		new ItemMaterialQuality("Refined", 1.0f),
-		new ItemMaterialQuality("Pure", 1.5f)
-	};
+		table.Clear();
+		this.items = items;
 
-	private static readonly ItemMaterial[] materials = new ItemMaterial[]
-	{
-		new ItemMaterial("Iron Ore", 1, 1, 4),
-		new ItemMaterial("Bauxite Ore", 1, 1, 6),
-		new ItemMaterial("Chromite Ore", 1, 1, 13),
-		new ItemMaterial("Argentite Ore", 1, 1, 15)
-	};
-
-	private static int GetID(int qualityIndex, int materialIndex)
-	{
-		return (materialIndex << 8) | qualityIndex;
-	}
-
-	private static int GetQualityIndex(int id)
-	{
-		return id & 0xFF;
-	}
-
-	private static int GetMaterialIndex(int id)
-	{
-		return id >> 8;
-	}
-
-	public static string GetName(int id)
-	{
-		int q = GetQualityIndex(id), m = GetMaterialIndex(id);
-
-		return qualities[q].name + " " + materials[m].name;
-	}
-
-	public static int GetBaseValue(int id)
-	{
-		int q = GetQualityIndex(id), m = GetMaterialIndex(id);
-
-		return Mathf.RoundToInt(qualities[q].valueMultiplier * materials[m].value);
-	}
-
-	public static int GetWeight(int id)
-	{
-		return materials[GetMaterialIndex(id)].weight;
-	}
-
-	public static int GetVolume(int id)
-	{
-		return materials[GetMaterialIndex(id)].volume;
-	}
-
-	public static Item GenerateRandomItem()
-	{
-		var item = new Item();
-		int q = Random.Range(0, qualities.Length);
-		int m = Random.Range(0, materials.Length);
-
-		item.id = GetID(q, m);
-		item.name = GetName(item.id);
-
-		return item;
-	}
-
-	public static List<int> GetItemIDs()
-	{
-		var list = new List<int>();
-
-		for(int q = 0; q < qualities.Length; ++q)
-		{
-			for(int m = 0; m < materials.Length; ++m)
+		for(int i = 0; i < items.Count; ++i)
+		{			
+			table.Add(new string[]
 			{
-				list.Add(GetID(q, m));
+				items[i].Name,
+				'x' + quantities[i].ToString(),
+				'$' + values[i].ToString()
+			});
+		}
+	}
+	
+	public void Render()
+	{		
+		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+		{
+			for(int i = 0; i < table.Count; i++)
+			{
+				string[] row = table[i];
+				GUILayout.BeginHorizontal();
+				{
+					if (GUILayout.Button(row[0], tableItemStyle, GUILayout.ExpandWidth(true)))
+				    {
+						foreach(var listener in listeners)
+						{
+							listener.ItemClicked(items[i]);
+						}
+					}
+					GUILayout.Label(row[1], GUILayout.Width(50));
+					GUILayout.Label(row[2], GUILayout.Width(50));
+				}
+				GUILayout.EndHorizontal();
 			}
 		}
-
-		return list;
+		GUILayout.EndScrollView();
 	}
 }

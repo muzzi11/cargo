@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class AuctionHouseState : State, TableListener
+public class AuctionHouseState : State, ItemTableListener
 {
 	private int width, height;
 
@@ -12,7 +12,7 @@ public class AuctionHouseState : State, TableListener
 	private const string sellCaption = "Sell";
 	private const string auctionHouseCaption = "Auction house";
 	
-	private Table table = new Table();
+	private ItemTable table = new ItemTable();
 	private Order order = null;
 	private Balance balance;
 	private Economy economy;
@@ -34,27 +34,16 @@ public class AuctionHouseState : State, TableListener
 	public void LoadEconomy(Economy economy)
 	{
 		this.economy = economy;
-
-		var items = economy.GetItems();
-		var quantities = new List<int>();
-		var values = new List<int>();
-		
-		foreach(Item item in items)
-		{
-			quantities.Add(economy.GetQuantity(item.id));
-			values.Add(economy.GetValue(item.id));
-		}
-
-		table.LoadData(items, quantities, values);
+		table.LoadData(economy.GetItems(), economy.GetQuantities(), economy.GetPrices());
 	}
 
-	public void ItemClicked(int id)
+	public void ItemClicked(Item item)
 	{
-		order = new Order(ItemTable.GetName(id),
-		                  economy.GetQuantity(id),
-		                  economy.GetValue(id),
-		                  ItemTable.GetVolume(id),
-		                  ItemTable.GetWeight(id));
+		order = new Order(item.Name,
+		                  economy.GetQuantity(item),
+		                  economy.GetPrice(item),
+		                  item.Volume,
+		                  item.Weight);
 	}
 	
 	public State UpdateState()

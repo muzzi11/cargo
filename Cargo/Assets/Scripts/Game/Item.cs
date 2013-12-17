@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 
-public class Item
+public struct Item
 {
-	public int id;
-	public string name;
+	public readonly int id;
+
+	public Item(int id)
+	{
+		this.id = id;
+	}
+
+	public string Name
+	{
+		get
+		{
+			return ItemDatabase.GetName(id);
+		}
+	}
 
 	public int Volume
 	{
 		get
 		{
-			return ItemTable.GetVolume(id);
+			return ItemDatabase.GetVolume(id);
 		}
 	}
 
@@ -17,7 +29,15 @@ public class Item
 	{
 		get
 		{
-			return ItemTable.GetWeight(id);
+			return ItemDatabase.GetWeight(id);
+		}
+	}
+
+	public int BasePrice
+	{
+		get
+		{
+			return ItemDatabase.GetBasePrice(id);
 		}
 	}
 }
