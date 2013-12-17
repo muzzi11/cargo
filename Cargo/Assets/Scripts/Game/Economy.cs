@@ -3,68 +3,89 @@ using System.Collections.Generic;
 
 public class Economy
 {
-	private Dictionary<int, int> items = new Dictionary<int, int>();
-	private Dictionary<int, int> itemValues = new Dictionary<int, int>();
+	private Dictionary<Item, int> itemStacks = new Dictionary<Item, int>();
+	private Dictionary<Item, int> itemPrices = new Dictionary<Item, int>();
 
 	private const float minValueMultiplier = 0.2f;
 	private const float maxValueMultiplier = 5.0f;
 
 	public Economy()
 	{
-		var itemIDs = ItemTable.GetItemIDs();
+		var items = ItemDatabase.GetAllItems();
 
-		foreach(int id in itemIDs)
+		foreach(Item item in items)
 		{
+			// Randomize item price
 			float multiplier = Random.Range(minValueMultiplier, maxValueMultiplier);
-			int value = Mathf.RoundToInt(multiplier * ItemTable.GetBaseValue(id));
-			itemValues.Add(id, value);
+			int value = Mathf.RoundToInt(multiplier * item.BaseValue);
+			itemPrices.Add(item, value);
 
+			// Randomly choose an item to be available in this economy
 			if(Random.value > 0.5f)
 			{
-				items.Add(id, Random.Range(1, 201));
+				itemStacks.Add(item, Random.Range(1, 201));
 			}
 		}
 	}
 
 	public List<Item> GetItems()
 	{
-		var list = new List<Item>();
+		var items = new List<Item>();
 
-		foreach(var pair in items)
+		foreach(var pair in itemStacks)
 		{
-			var item = new Item();
-
-			item.id = pair.Key;
-			item.name = ItemTable.GetName(pair.Key);
-
-			list.Add(item);
+			items.Add(pair.Key);
 		}
 
-		return list;
+		return items;
 	}
 
-	public int GetQuantity(int id)
+	public int GetQuantity(Item item)
 	{
-		return items[id];
+		return itemStacks.ContainsKey(item) ? itemStacks[item] : 0;
 	}
 
-	public int GetValue(int id)
+	public List<int> GetQuantities()
 	{
-		return itemValues[id];
-	}
+		var quantities = new List<int>();
 
-	public void Consume(int id, int amount)
-	{
-		if(items.ContainsKey(id))
+		foreach(var pair in itemStacks)
 		{
-			if(items[id] >= amount) items[id] -= amount;
-			if(items[id] == 0) items.Remove(id);
+			quantities.Add(pair.Value);
+		}
+
+		return quantities;
+	}
+
+	public int GetPrice(Item item)
+	{
+		return itemPrices[item];
+	}
+
+	public List<int> GetPrices()
+	{
+		var prices = new List<int>();
+
+		foreach(var pair in itemPrices)
+		{
+			prices.Add(pair.Value);
+		}
+
+		return prices;
+	}
+
+	public void Consume(Item item, int amount)
+	{
+		if(itemStacks.ContainsKey(item))
+		{
+			if(itemStacks[item] >= amount) itemStacks[item] -= amount;
+			if(itemStacks[item] == 0) itemStacks.Remove(item);
 		}
 	}
 
-	public void Supply(int id, int amount)
+	public void Supply(Item item, int amount)
 	{
-		if(items.ContainsKey(id)) items[id] += amount;
-		else items.Add(id, amount);
+		if(itemStacks.ContainsKey(item)) itemStacks[item] += amount;
+		else itemStacks.Add(item, amount);
 	}
 }
