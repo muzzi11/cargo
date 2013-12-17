@@ -23,7 +23,7 @@ public class BuyState : OrderState
 	protected override void ProcessTransaction(int orderValue)
 	{
 		this.orderValue = orderValue;
-		sufficientFunds = returnToPrevState = balance.withdraw(orderValue);
+		sufficientFunds = returnToPrevState = balance.Withdraw(orderValue);
 	}
 	
 	public override State UpdateState()

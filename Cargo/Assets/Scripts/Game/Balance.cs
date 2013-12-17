@@ -12,12 +12,12 @@ public class Balance
 		return balance;
 	}
 
-	public void deposit(int cash)
+	public void Deposit(int cash)
 	{
 		balance += cash;
 	}
 
-	public bool withdraw(int cash)
+	public bool Withdraw(int cash)
 	{
 		if (balance < cash) return false;
 

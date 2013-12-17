@@ -32,7 +32,7 @@ public class SellState : OrderState
 	
 	protected override void ProcessTransaction(int orderValue)
 	{
-		balance.deposit(orderValue);
+		balance.Deposit(orderValue);
 		returnToPrevState = true;
 	}
 }
