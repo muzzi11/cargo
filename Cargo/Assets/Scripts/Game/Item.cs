@@ -33,7 +33,7 @@ public struct Item
 		}
 	}
 
-	public int BaseValue
+	public int BasePrice
 	{
 		get
 		{
