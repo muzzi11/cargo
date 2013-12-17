@@ -17,7 +17,7 @@ public class Economy
 		{
 			// Randomize item price
 			float multiplier = Random.Range(minValueMultiplier, maxValueMultiplier);
-			int value = Mathf.RoundToInt(multiplier * item.BaseValue);
+			int value = Mathf.RoundToInt(multiplier * item.BasePrice);
 			itemPrices.Add(item, value);
 
 			// Randomly choose an item to be available in this economy
