@@ -16,9 +16,10 @@ public class Game : MonoBehaviour, OrderListener
 	// Use this for initialization
 	void Start()
 	{
-		ship = new Ship(new Vector2(15, 15));
+		ship = new Ship(new Vector2(0, 0));
 		cargo = new Cargo(200);
 		space = GameObject.Find("Space").GetComponent<Space>();
+		space.GeneratePlanets(cameraBounds);
 		balance = new Balance();
 		currentState = new NavigationState(space, ship, this, balance, cargo);
 		playerNode = GameObject.Find("Player Node");
