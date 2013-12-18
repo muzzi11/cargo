@@ -90,8 +90,10 @@ public class AuctionHouseState : State, ItemTableListener
 
 	private void LoadTable()
 	{
-		if (orderMode == (int) OrderState.OrderMode.Buy)
-			table.LoadData(economy.GetItems(), economy.GetQuantities(), economy.GetPrices());
+		if (orderMode == (int)OrderState.OrderMode.Buy)
+		{
+			table.LoadData (economy.GetItems (), economy.GetQuantities (), economy.GetPrices ());
+		}
 		else
 		{
 			List<Item> items = cargo.GetItems();
