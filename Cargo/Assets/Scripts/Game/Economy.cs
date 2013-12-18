@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Economy
 {
@@ -30,14 +31,7 @@ public class Economy
 
 	public List<Item> GetItems()
 	{
-		var items = new List<Item>();
-
-		foreach(var pair in itemStacks)
-		{
-			items.Add(pair.Key);
-		}
-
-		return items;
+		return itemStacks.Keys.ToList();
 	}
 
 	public int GetQuantity(Item item)
@@ -47,14 +41,7 @@ public class Economy
 
 	public List<int> GetQuantities()
 	{
-		var quantities = new List<int>();
-
-		foreach(var pair in itemStacks)
-		{
-			quantities.Add(pair.Value);
-		}
-
-		return quantities;
+		return itemStacks.Values.ToList();
 	}
 
 	public int GetPrice(Item item)
@@ -64,14 +51,7 @@ public class Economy
 
 	public List<int> GetPrices()
 	{
-		var prices = new List<int>();
-
-		foreach(var pair in itemPrices)
-		{
-			prices.Add(pair.Value);
-		}
-
-		return prices;
+		return itemPrices.Values.ToList();
 	}
 
 	public void Consume(Item item, int amount)
