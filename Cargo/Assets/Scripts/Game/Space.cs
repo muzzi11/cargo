@@ -17,8 +17,6 @@ public class Space : MonoBehaviour
 	void Start()
 	{
 		planetRadiusSq = Mathf.Pow(planetSprites[0].bounds.extents.x, 2);
-
-		GeneratePlanets();
 	}
 	
 	// Update is called once per frame
@@ -38,18 +36,21 @@ public class Space : MonoBehaviour
 		return null;
 	}
 
-	// TODO: magic numbers
-	private void GeneratePlanets()
+	// TODO: remove seed
+	public void GeneratePlanets(Rect bounds)
 	{
+		planets.Clear();
+
 		Random.seed = seed;
+
 		for(int i = 0; i < planetCount; ++i)
 		{
 			Vector2 position = new Vector2();
 			
 			do
 			{
-				position.x = Random.Range(0, 30);
-				position.y = Random.Range(0, 30);
+				position.x = Random.Range(bounds.xMin, bounds.xMax);
+				position.y = Random.Range(bounds.yMin, bounds.yMax);
 			} while(PlanetAt(position) != null);	// prevent planets from spawning on top of eachother
 			
 			var gameObject = Instantiate(planetPrefab, new Vector3(position.x, position.y), Quaternion.identity) as GameObject;

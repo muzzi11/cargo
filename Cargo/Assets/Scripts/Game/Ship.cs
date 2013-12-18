@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Ship
 {
+	private int damage;
+	private int health, maxHealth, shield, maxShield;
 	private float speed = 3.0f;
 	private Vector2 position, destination;
 
@@ -10,6 +12,10 @@ public class Ship
 	{
 		this.position = new Vector2(position.x, position.y);
 		destination = new Vector2(position.x, position.y);
+
+		damage = 100;
+		health = maxHealth = 300;
+		shield = maxShield = 150;
 	}
 
 	// Returns a copy of the ship's position
