@@ -31,6 +31,11 @@ public class Economy
 
 	public List<Item> GetAllItems()
 	{
+		return itemPrices.Keys.ToList();
+	}
+
+	public List<Item> GetAllPlanetaryItems()
+	{
 		return itemStacks.Keys.ToList();
 	}
 

@@ -67,7 +67,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 	public void LoadEconomy(Economy economy)
 	{
 		this.economy = economy;
-		LoadTable();
+		//LoadTable();
 	}
 
 	public void ItemClicked(Item item)
@@ -126,7 +126,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 	{
 		if (orderMode == OrderState.OrderMode.Buy)
 		{
-			List<Item> items = economy.GetItems();
+			List<Item> items = economy.GetAllPlanetaryItems();
 			table.LoadData(items, economy.GetQuantities(), economy.GetPrices(items));
 		}
 		else

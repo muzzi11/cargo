@@ -81,7 +81,7 @@ public class OrderState : State
 	private Vector2 scrollPosition;
 	private State returnToState;
 	private int width, height, orderValue, currentBalance;
-	private bool returnToPrevState, orderPlaced = false, sufficientFunds = true;
+	private bool returnToPrevState;
 	private AuctionLot lot;
 	private OrderListener listener;
 
@@ -105,11 +105,10 @@ public class OrderState : State
 			return returnToState;
 		}
 
-		if(lot != null) GUI.Window(3, new Rect(0, 0, width, height), TransactionWindow, string.Format(titleCaptions[mode], lot.Item.Name));
-		if(orderPlaced) GUI.ModalWindow(2, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmTitleCaption);
+		if(lot != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(titleCaptions[mode], lot.Item.Name));
 
-		if(currentDialog == Dialog.InsufficientFunds) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), InsufficientFundsWindow, insufficientFundsCaption);
-
+		if(currentDialog == Dialog.Confirmation) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmTitleCaption);
+		else if(currentDialog == Dialog.InsufficientFunds) GUI.ModalWindow(2, new Rect(0, height/4, width, height/2), InsufficientFundsWindow, insufficientFundsCaption);
 		
 		return this;
 	}
@@ -188,7 +187,7 @@ public class OrderState : State
 				{	
 					returnToPrevState = true;
 				}
-				if(GUILayout.Button(orderCaptions[mode])) orderPlaced = true; 
+				if(GUILayout.Button(orderCaptions[mode])) currentDialog = Dialog.Confirmation; 
 			}
 			GUILayout.EndHorizontal();
 		}
@@ -207,11 +206,9 @@ public class OrderState : State
 
 			GUILayout.BeginHorizontal();
 			{
-				if(GUILayout.Button("Back")) orderPlaced = false;
+				if(GUILayout.Button("Back")) currentDialog = Dialog.None;
 				if(GUILayout.Button(orderCaptions[mode]))
 				{
-					orderPlaced = false;
-
 					Order order = new Order(lot.Item, lot.ItemPrice, Mathf.RoundToInt(quantitySlider));
 
 					if (mode == (int)OrderMode.Buy) currentDialog = listener.BuyOrderPlaced(order);
