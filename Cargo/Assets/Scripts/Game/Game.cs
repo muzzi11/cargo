@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Game : MonoBehaviour, OrderListener
+public class Game : MonoBehaviour
 {
 	public Rect cameraBounds;
 	public GUISkin guiSkin;
@@ -21,7 +21,7 @@ public class Game : MonoBehaviour, OrderListener
 		space = GameObject.Find("Space").GetComponent<Space>();
 		space.GeneratePlanets(cameraBounds);
 		balance = new Balance();
-		currentState = new NavigationState(space, ship, this, balance, cargo);
+		currentState = new NavigationState(space, ship, balance, cargo);
 		playerNode = GameObject.Find("Player Node");
 	}
 	
@@ -50,20 +50,5 @@ public class Game : MonoBehaviour, OrderListener
 		cameraPos.z = Camera.main.transform.position.z;
 		
 		Camera.main.transform.position = cameraPos;
-	}
-
-	public bool buyOrderPlaced(Order order)
-	{
-		if (balance.GetBalance() < order.Sum) return false;
-
-		balance.Withdraw(order.Sum);
-		cargo.AddItem(order.Item, order.Quantity);
-		return true;
-	}
-
-	public void sellOrderPlaced(Order order)
-	{
-		balance.Deposit(order.Sum);
-		cargo.RemoveItem(order.Item);
 	}
 }

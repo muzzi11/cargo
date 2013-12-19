@@ -14,9 +14,9 @@ public class NavigationState : State
 	private string inventoryCaption = "Inventory";
 	private string transparentStyle = "transparent";
 
-	public NavigationState(Space space, Ship ship, OrderListener listener, Balance balance, Cargo cargo)
+	public NavigationState(Space space, Ship ship, Balance balance, Cargo cargo)
 	{
-		this.auctionHouseState = new AuctionHouseState(this, listener, balance, cargo);
+		this.auctionHouseState = new AuctionHouseState(this, balance, cargo);
 		worldPosition = new Vector2();
 		screenPosition = new Vector3();
 

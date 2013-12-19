@@ -29,7 +29,7 @@ public class Economy
 		}
 	}
 
-	public List<Item> GetItems()
+	public List<Item> GetAllItems()
 	{
 		return itemStacks.Keys.ToList();
 	}
@@ -49,9 +49,16 @@ public class Economy
 		return itemPrices[item];
 	}
 
-	public List<int> GetPrices()
+	public List<int> GetAllPrices()
 	{
 		return itemPrices.Values.ToList();
+	}
+
+	public List<int> GetPrices(List<Item> items)
+	{
+		List<int> prices = new List<int>();		
+		foreach(Item item in items) prices.Add(GetPrice(item));
+		return prices;
 	}
 
 	public void Consume(Item item, int amount)
