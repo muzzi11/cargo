@@ -4,7 +4,7 @@ public class Balance
 
 	public Balance()
 	{
-		balance = 100;
+		balance = 99999;
 	}
 
 	public int GetBalance()

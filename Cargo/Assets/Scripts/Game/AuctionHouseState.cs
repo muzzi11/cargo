@@ -38,7 +38,10 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 	private const string buyCaption = "Buy";
 	private const string sellCaption = "Sell";
 	private const string auctionHouseCaption = "Auction house";
-	
+	private const string balanceCaption = "Balance: {0}";
+	private const string cargoCaption = "Cargo space: {0}";
+	private const string normalLabel = "normalLabel";
+
 	private ItemTable table = new ItemTable();
 	private Economy economy;
 	private OrderState orderState = null;
@@ -67,7 +70,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 	public void LoadEconomy(Economy economy)
 	{
 		this.economy = economy;
-		//LoadTable();
+		LoadTable();
 	}
 
 	public void ItemClicked(Item item)
@@ -79,7 +82,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 		AuctionLot lot = new AuctionLot(item,
 		                  availability,
 		                  economy.GetPrice(item));
-		orderState = new OrderState(this, this, lot, balance.GetBalance(), orderMode);
+		orderState = new OrderState(this, this, lot, orderMode, balance.GetBalance(), cargo.GetRemainingSpace());
 	}
 	
 	public State UpdateState()
@@ -112,6 +115,13 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 			OrderMode = (OrderState.OrderMode)GUILayout.Toolbar((int)orderMode, toolbarStrings);
 
 			table.Render();
+
+			GUILayout.BeginHorizontal();
+			{
+				GUILayout.Label(string.Format(balanceCaption, balance.GetBalance()), normalLabel);
+				GUILayout.Label(string.Format(cargoCaption, cargo.GetRemainingSpace()), normalLabel);
+			}
+			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
 			{
