@@ -14,16 +14,23 @@ public class Cargo
 
 	public bool AddItem(Item item, int quantity)
 	{
-		if (currentvolume + item.Volume > maxVolume) return false;
+		if (currentvolume + item.Volume * quantity > maxVolume) return false;
 
-		compartments.Add(item, quantity);
-		currentvolume += item.Volume;
+		if (compartments.ContainsKey(item))
+			compartments[item] += quantity;
+		else compartments.Add(item, quantity);
+
+		currentvolume += item.Volume * quantity;
 		return true;
 	}
 
-	public void RemoveItem(Item item)
+	public void RemoveItem(Item item, int quantity)
 	{
-		compartments.Remove(item);
+		if (compartments[item] < quantity)
+			compartments[item] -= quantity;
+		else compartments.Remove(item);
+
+		currentvolume -= item.Volume * quantity;
 	}
 
 	public int GetWeight()
@@ -43,5 +50,10 @@ public class Cargo
 	public List<int> GetQuantities()
 	{
 		return compartments.Values.ToList();
+	}
+
+	public int GetQuantity(Item item)
+	{
+		return compartments[item];
 	}
 }

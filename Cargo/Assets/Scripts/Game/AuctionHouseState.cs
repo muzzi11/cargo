@@ -1,9 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class AuctionHouseState : State, ItemTableListener
+public class AuctionLot
 {
-	private int width, height, orderMode;
+	private Item item;
+	private int itemPrice, availability;
+
+	public AuctionLot(Item item, int availability, int itemPrice)
+	{
+		this.item = item;
+		this.itemPrice = itemPrice;
+		this.availability = availability;
+	}
+
+	public Item Item
+	{
+		get { return item; }
+	}
+	public int ItemPrice
+	{
+		get { return itemPrice; }
+	}
+	public int Availability
+	{
+		get { return availability; }
+	}
+}
+
+public class AuctionHouseState : State, ItemTableListener, OrderListener
+{
+	private int width, height;
+	private OrderState.OrderMode orderMode;
 
 	private State returnToState;
 
@@ -15,36 +42,44 @@ public class AuctionHouseState : State, ItemTableListener
 	private ItemTable table = new ItemTable();
 	private Economy economy;
 	private OrderState orderState = null;
-	private OrderListener listener;
 	private Balance balance;
 	private Cargo cargo;
 
 	private bool returnToPrevState = false;
 
-	public AuctionHouseState(State returnToState, OrderListener listener, Balance balance, Cargo cargo)
+	private OrderState.OrderMode OrderMode
+	{
+		set { orderMode = value; LoadTable(); }
+	}
+
+	public AuctionHouseState(State returnToState, Balance balance, Cargo cargo)
 	{
 		this.returnToState = returnToState;
-		this.listener = listener;
 		this.balance = balance;
 		this.cargo = cargo;
 
 		width = Screen.width;
 		height = Screen.height;
-		orderMode = (int)OrderState.OrderMode.Buy; 
+		orderMode = OrderState.OrderMode.Buy; 
 		table.AddListener(this);
 	}
 
 	public void LoadEconomy(Economy economy)
 	{
 		this.economy = economy;
+		LoadTable();
 	}
 
 	public void ItemClicked(Item item)
 	{
-		Order order = new Order(item,
-		                  economy.GetQuantity(item),
+		int availability;
+		if (orderMode == OrderState.OrderMode.Buy) availability = economy.GetQuantity(item);
+		else availability = cargo.GetQuantity(item);
+
+		AuctionLot lot = new AuctionLot(item,
+		                  availability,
 		                  economy.GetPrice(item));
-		orderState = new OrderState (this, listener, order, balance.GetBalance(), orderMode);
+		orderState = new OrderState(this, this, lot, balance.GetBalance(), orderMode);
 	}
 	
 	public State UpdateState()
@@ -69,13 +104,12 @@ public class AuctionHouseState : State, ItemTableListener
 	
 	public void AuctionHouseWindow(int ID)
 	{
-		LoadTable();
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);
 
 			string[] toolbarStrings = {buyCaption, sellCaption};
-			orderMode = GUILayout.Toolbar(orderMode, toolbarStrings);
+			OrderMode = (OrderState.OrderMode)GUILayout.Toolbar((int)orderMode, toolbarStrings);
 
 			table.Render();
 
@@ -90,18 +124,32 @@ public class AuctionHouseState : State, ItemTableListener
 
 	private void LoadTable()
 	{
-		if (orderMode == (int) OrderState.OrderMode.Buy)
-			table.LoadData(economy.GetItems(), economy.GetQuantities(), economy.GetPrices());
+		if (orderMode == OrderState.OrderMode.Buy)
+		{
+			List<Item> items = economy.GetItems();
+			table.LoadData(items, economy.GetQuantities(), economy.GetPrices(items));
+		}
 		else
 		{
 			List<Item> items = cargo.GetItems();
-			List<int> prices = new List<int>();
-
-			foreach(Item item in items)
-				prices.Add(economy.GetPrice(item));
-
-			table.LoadData(items, cargo.GetQuantities(), prices);
+			table.LoadData(items, cargo.GetQuantities(), economy.GetPrices(items));
 		}
+	}
+
+	public OrderState.Dialog BuyOrderPlaced(Order order)
+	{
+		if (!balance.Withdraw(order.Price)) return OrderState.Dialog.InsufficientFunds;
+		if (!cargo.AddItem(order.Item, order.Quantity)) return OrderState.Dialog.InsufficientSpace;
+		economy.Consume(order.Item, order.Quantity);
+		return OrderState.Dialog.TransactionSummary;
+	}
+	
+	public OrderState.Dialog SellOrderPlaced(Order order)
+	{
+		balance.Deposit(order.Price);
+		cargo.RemoveItem(order.Item, order.Quantity);
+		economy.Supply(order.Item, order.Quantity);
+		return OrderState.Dialog.TransactionSummary;
 	}
 }
 

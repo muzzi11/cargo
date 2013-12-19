@@ -3,40 +3,30 @@ using System.Collections.Generic;
 
 public interface OrderListener
 {
-	bool buyOrderPlaced(Order order);
-	void sellOrderPlaced(Order order);
+	OrderState.Dialog BuyOrderPlaced(Order order);
+	OrderState.Dialog SellOrderPlaced(Order order);
 }
 
 public class Order
 {
-	private int quantity, sum, availability, itemPrice;
+	private int quantity, itemPrice;
 	private Item item;
 
-	public Order(Item item, int availability, int itemPrice)
+	public Order(Item item, int itemPrice, int quantity)
 	{
-		this.availability = availability;
 		this.itemPrice = itemPrice;
 		this.item = item;
+		this.quantity = quantity;
 	}
 
 	public int Quantity
 	{
 		get { return quantity; }
-		set
-		{
-			quantity = value;
-			sum = quantity * itemPrice;
-		}
 	}
 
-	public int Sum
+	public int Price
 	{
-		get { return sum; }
-	}	
-
-	public int Availability
-	{
-		get { return availability; }
+		get { return quantity * itemPrice; }
 	}
 
 	public int ItemPrice
@@ -47,8 +37,7 @@ public class Order
 	public Item Item
 	{
 		get { return item; }
-	}
-		
+	}		
 }
 
 public class OrderState : State
@@ -59,6 +48,16 @@ public class OrderState : State
 		Sell
 	}
 	private int mode;
+
+	public enum Dialog : int
+	{
+		None,
+		InsufficientFunds,
+		InsufficientSpace,
+		Confirmation,
+		TransactionSummary
+	}
+	private Dialog currentDialog = Dialog.None;
 
 	private readonly string[] titleCaptions = { "Buying {0}", "Selling {0}" },
 						   orderCaptions = { "Buy", "Sell" },
@@ -83,15 +82,15 @@ public class OrderState : State
 	private State returnToState;
 	private int width, height, orderValue, currentBalance;
 	private bool returnToPrevState, orderPlaced = false, sufficientFunds = true;
-	private Order order;
+	private AuctionLot lot;
 	private OrderListener listener;
 
-	public OrderState(State returnToState, OrderListener listener, Order order, int currentBalance, int mode)
+	public OrderState(State returnToState, OrderListener listener, AuctionLot lot, int currentBalance, OrderMode mode)
 	{
 		this.returnToState = returnToState;
-		this.order = order;
+		this.lot = lot;
 		this.currentBalance = currentBalance;
-		this.mode = mode;
+		this.mode = (int)mode;
 		this.listener = listener;
 
 		width = Screen.width;
@@ -105,32 +104,36 @@ public class OrderState : State
 			returnToPrevState = false;
 			return returnToState;
 		}
-		
-		if(!sufficientFunds) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), InsufficientFundsWindow, insufficientFundsCaption);
+
+		if(lot != null) GUI.Window(3, new Rect(0, 0, width, height), TransactionWindow, string.Format(titleCaptions[mode], lot.Item.Name));
 		if(orderPlaced) GUI.ModalWindow(2, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmTitleCaption);
-		
-		if(order != null) GUI.Window(3, new Rect(0, 0, width, height), TransactionWindow, string.Format(titleCaptions[mode], order.Item.Name));
+
+		if(currentDialog == Dialog.InsufficientFunds) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), InsufficientFundsWindow, insufficientFundsCaption);
+
 		
 		return this;
 	}
 
-	private int UpdateBalance()
+	private int UpdateBalance(int price)
 	{
-		if (mode == (int)OrderMode.Buy) return currentBalance - order.Sum;
-		return currentBalance + order.Sum;
+		if (mode == (int)OrderMode.Buy) return currentBalance - price;
+		return currentBalance + price;
 	}
 
 	private void InsufficientFundsWindow(int ID)
 	{
-		int toShort = orderValue - currentBalance;
+		int tooShort = orderValue - currentBalance;
 		
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);
-			GUILayout.Label(string.Format(dollazShortCaption, toShort), normalLabel);
+			GUILayout.BeginHorizontal();
+			{
+				GUILayout.Label(string.Format(dollazShortCaption, tooShort), normalLabel);
+			}
 			GUILayout.FlexibleSpace();
 			
-			if(GUILayout.Button("Back")) sufficientFunds = false;
+			if(GUILayout.Button("Back")) currentDialog = Dialog.None;
 		}
 		GUILayout.EndVertical();
 	}
@@ -154,10 +157,10 @@ public class OrderState : State
 
 				GUILayout.BeginHorizontal();
 				{
-					GUILayout.Label(order.Item.Name, leftAlignedLabel, GUILayout.ExpandWidth(true));
-					GUILayout.Label(order.Item.Volume.ToString(), GUILayout.Width(65));
-					GUILayout.Label(order.Item.Weight.ToString(), GUILayout.Width(65));
-					GUILayout.Label("$" + order.ItemPrice.ToString(), GUILayout.Width(55));
+					GUILayout.Label(lot.Item.Name, leftAlignedLabel, GUILayout.ExpandWidth(true));
+					GUILayout.Label(lot.Item.Volume.ToString(), GUILayout.Width(65));
+					GUILayout.Label(lot.Item.Weight.ToString(), GUILayout.Width(65));
+					GUILayout.Label("$" + lot.ItemPrice.ToString(), GUILayout.Width(55));
 				}
 				GUILayout.EndHorizontal();
 			}
@@ -167,12 +170,12 @@ public class OrderState : State
 
 			GUILayout.BeginVertical();
 			{
-				quantitySlider = GUILayout.HorizontalSlider(quantitySlider, 1, order.Availability);
-				order.Quantity = Mathf.RoundToInt(quantitySlider);
-				int remainder = UpdateBalance();
+				quantitySlider = GUILayout.HorizontalSlider(quantitySlider, 1, lot.Availability);
+				int price = Mathf.RoundToInt (quantitySlider) * lot.ItemPrice;
+				int remainder = UpdateBalance(price);
 
 				GUILayout.Label(string.Format(quantityCaption, (int)quantitySlider), normalLabel, GUILayout.ExpandWidth(true));
-				GUILayout.Label(string.Format(sumCaptions[mode], order.Sum), normalLabel);
+				GUILayout.Label(string.Format(sumCaptions[mode], price), normalLabel);
 				GUILayout.Label(string.Format(balanceCaption, remainder), normalLabel);
 			}
 			GUILayout.EndVertical();
@@ -199,7 +202,7 @@ public class OrderState : State
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);	
-			GUILayout.Label(string.Format(confirmOrderCaption, placeOrderCaptions[mode], Mathf.RoundToInt(quantitySlider), order.Item.Name), normalLabel);
+			GUILayout.Label(string.Format(confirmOrderCaption, placeOrderCaptions[mode], Mathf.RoundToInt(quantitySlider), lot.Item.Name), normalLabel);
 			GUILayout.FlexibleSpace();
 
 			GUILayout.BeginHorizontal();
@@ -209,8 +212,10 @@ public class OrderState : State
 				{
 					orderPlaced = false;
 
-					if (mode == (int)OrderMode.Buy) returnToPrevState = sufficientFunds = listener.buyOrderPlaced(order);
-					else listener.sellOrderPlaced(order);
+					Order order = new Order(lot.Item, lot.ItemPrice, Mathf.RoundToInt(quantitySlider));
+
+					if (mode == (int)OrderMode.Buy) currentDialog = listener.BuyOrderPlaced(order);
+					else currentDialog = listener.SellOrderPlaced(order);
 				}
 			}
 			GUILayout.EndHorizontal();
