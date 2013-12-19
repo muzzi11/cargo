@@ -7,7 +7,8 @@ public class NavigationState : State
 	private Ship ship;
 	private Space space;
 	private Planet planetDestination = null;
-	private Vector2 screenPosition, worldPosition;
+	private Vector2 worldPosition;
+	private Vector3 screenPosition;
 
 	private AuctionHouseState auctionHouseState; 
 	private string inventoryCaption = "Inventory";
@@ -16,8 +17,8 @@ public class NavigationState : State
 	public NavigationState(Space space, Ship ship, OrderListener listener, Balance balance, Cargo cargo)
 	{
 		this.auctionHouseState = new AuctionHouseState(this, listener, balance, cargo);
-		screenPosition = new Vector2();
 		worldPosition = new Vector2();
+		screenPosition = new Vector3();
 
 		width = Screen.width;
 		height = Screen.height;
@@ -28,7 +29,8 @@ public class NavigationState : State
 
 	public State UpdateState()
 	{
-		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y);
+		float cameraHeight = -Camera.main.transform.position.z;
+		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y, cameraHeight);
 		worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
 
 		GUILayout.BeginHorizontal();
