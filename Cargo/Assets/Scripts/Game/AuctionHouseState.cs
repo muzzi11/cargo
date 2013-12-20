@@ -37,18 +37,8 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 {
 	private int width, height;
 	private OrderState.OrderMode orderMode;
-
 	private State returnToState;
-
-	private const string backCaption = "Back";
-	private const string buyCaption = "Buy";
-	private const string sellCaption = "Sell";
-	private const string auctionHouseCaption = "Auction house";
-	private const string balanceCaption = "Balance: {0}";
-	private const string cargoCaption = "Cargo space: {0}";
-	private const string normalStyle = "normalLabel";
 	private string planetName;
-
 	private ItemTable table = new ItemTable();
 	private Economy economy;
 	private OrderState orderState = null;
@@ -116,7 +106,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 			return state;
 		}
 
-		GUI.Window(0, new Rect(0, 0, width, height), AuctionHouseWindow, auctionHouseCaption);
+		GUI.Window(0, new Rect(0, 0, width, height), AuctionHouseWindow, StringTable.auctionHouseCaption);
 
 		return this;
 	}
@@ -127,21 +117,21 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 		{
 			GUILayout.Space(40);
 
-			string[] toolbarStrings = {buyCaption, sellCaption};
+			string[] toolbarStrings = {StringTable.buyCaption, StringTable.sellCaption};
 			OrderMode = (OrderState.OrderMode)GUILayout.Toolbar((int)orderMode, toolbarStrings);
 
 			table.Render();
 			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(string.Format(balanceCaption, balance.GetBalance()), normalStyle);
-				GUILayout.Label(string.Format(cargoCaption, cargo.GetRemainingSpace()), normalStyle);
+				GUILayout.Label(string.Format(StringTable.balanceCaption, balance.GetBalance()), StringTable.normalLabelStyle);
+				GUILayout.Label(string.Format(StringTable.cargoCaption, cargo.GetRemainingSpace()), StringTable.normalLabelStyle);
 			}
 			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
 			{
-				if(GUILayout.Button(backCaption)) returnToPrevState = true;
+				if(GUILayout.Button(StringTable.backCaption)) returnToPrevState = true;
 			}
 			GUILayout.EndHorizontal();
 		}

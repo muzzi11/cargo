@@ -66,31 +66,6 @@ public class BattleState : State
 	}
 
 	private readonly int collisionMask;
-	private const string 
-		okCatpion = "OK",
-		attackCaption = "Attack",
-		fleeCaption = "Flee",
-		absorbCaption = "Absorb",
-		hullCaption = "HULL {0}/{1}",
-		shieldCaption = "SHIELD {0}/{1}",
-		statusText = "The enemy is charging weapons.",
-		hullLabelStyle = "hullLabel",
-		shieldLabelStyle = "shieldLabel",
-		boxStyle = "box",
-		normalLabelStyle = "normalLabel";
-
-	private static readonly string[] windowTitles = new string[]
-	{
-		"A wild raider apears!", 
-		"Fleeing failed"
-	};
-
-	private static readonly string[] windowTexts = new string[]
-	{
-		"Destroy the enemy before it destroys you or make an attempt to flee.",
-		"Your attempt to flee has failed."
-	};
-
 	private readonly GUI.WindowFunction[] windowFunctions;
 	private Windows currentWindow = Windows.Intro;
 
@@ -160,32 +135,32 @@ public class BattleState : State
 
 	public State UpdateState()
 	{
-		string playerHull = string.Format(hullCaption, playerShip.Hull, playerShip.MaxHull);
-		string playerShield = string.Format(shieldCaption, playerShip.Shield, playerShip.MaxShield);
-		string enemyHull = string.Format(hullCaption, enemyShip.Hull, enemyShip.MaxHull);
-		string enemyShield = string.Format(shieldCaption, enemyShip.Shield, enemyShip.MaxShield);
+		string playerHull = string.Format(StringTable.hullCaption, playerShip.Hull, playerShip.MaxHull);
+		string playerShield = string.Format(StringTable.shieldCaption, playerShip.Shield, playerShip.MaxShield);
+		string enemyHull = string.Format(StringTable.hullCaption, enemyShip.Hull, enemyShip.MaxHull);
+		string enemyShield = string.Format(StringTable.shieldCaption, enemyShip.Shield, enemyShip.MaxShield);
 
 		turns.Update();
 
 		GUILayout.BeginArea(new Rect(5, 5, width-10, height-10));
 		{
-			GUILayout.BeginHorizontal(boxStyle, GUILayout.ExpandWidth(true));
+			GUILayout.BeginHorizontal(StringTable.boxStyle, GUILayout.ExpandWidth(true));
 			{
-				GUILayout.Label(enemyHull, hullLabelStyle);
+				GUILayout.Label(enemyHull, StringTable.hullLabelStyle);
 				GUILayout.FlexibleSpace();
-				GUILayout.Label(enemyShield, shieldLabelStyle);
+				GUILayout.Label(enemyShield, StringTable.shieldLabelStyle);
 			}
 			GUILayout.EndHorizontal();
 
 			GUILayout.FlexibleSpace();
 
-			GUILayout.BeginVertical(boxStyle, GUILayout.ExpandWidth(true));
+			GUILayout.BeginVertical(StringTable.boxStyle, GUILayout.ExpandWidth(true));
 			{
 				GUILayout.BeginHorizontal();
 				{
-					GUILayout.Label(playerHull, hullLabelStyle);
+					GUILayout.Label(playerHull, StringTable.hullLabelStyle);
 					GUILayout.FlexibleSpace();
-					GUILayout.Label(playerShield, shieldLabelStyle);
+					GUILayout.Label(playerShield, StringTable.shieldLabelStyle);
 				}
 				GUILayout.EndHorizontal();
 
@@ -193,12 +168,12 @@ public class BattleState : State
 				{
 					if(turns.PlayerTurn)
 					{
-						if(GUILayout.Button(attackCaption)) Attack(playerShip, enemyShip, playerObject, enemyObject);
-						if(GUILayout.Button(fleeCaption)) Flee();
+						if(GUILayout.Button(StringTable.attackCaption)) Attack(playerShip, enemyShip, playerObject, enemyObject);
+						if(GUILayout.Button(StringTable.fleeCaption)) Flee();
 					}
 					else
 					{
-						GUILayout.Label(statusText, hullLabelStyle);
+						GUILayout.Label(StringTable.statusText, StringTable.hullLabelStyle);
 					}
 				}
 				GUILayout.EndHorizontal();
@@ -209,7 +184,7 @@ public class BattleState : State
 		
 		if(currentWindow != Windows.None)
 		{
-			GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ModalWindow, windowTitles[(int)currentWindow]);
+			GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ModalWindow, StringTable.battleWindowTitles[(int)currentWindow]);
 		}
 		else
 		{
@@ -234,7 +209,7 @@ public class BattleState : State
 	private void Attack(Ship attacker, Ship target, ShipPrefab attackerObject, ShipPrefab targetObject)
 	{
 		int damage = target.TakeDamage(attacker.Damage);
-		string damageText = damage > 0 ? damage.ToString() : absorbCaption;
+		string damageText = damage > 0 ? damage.ToString() : StringTable.absorbCaption;
 		var position = Camera.main.WorldToViewportPoint(targetObject.transform.position);
 
 		if(!target.Alive) turns.EndTurns();
@@ -267,10 +242,10 @@ public class BattleState : State
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);
-			GUILayout.Label(windowTexts[(int)currentWindow], normalLabelStyle);
+			GUILayout.Label(StringTable.battleWindowTexts[(int)currentWindow], StringTable.normalLabelStyle);
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button(okCatpion)) currentWindow = Windows.None;
+			if(GUILayout.Button(StringTable.okCaption)) currentWindow = Windows.None;
 		}
 		GUILayout.EndVertical();
 	}

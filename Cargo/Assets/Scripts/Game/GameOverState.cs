@@ -3,11 +3,7 @@ using System.Collections;
 
 public class GameOverState : State
 {
-	private int width, height;
-	private const string 
-		windowCaption = "GameOver",
-		windowText = "Your ship was destroyed, you failed...",
-		normalLabelStyle = "normalLabel";
+	private int width, height; 
 
 	public GameOverState()
 	{
@@ -17,14 +13,14 @@ public class GameOverState : State
 
 	public State UpdateState()
 	{
-		GUI.Window(1, new Rect(0, 0, width, height), Window, windowCaption);
+		GUI.Window(1, new Rect(0, 0, width, height), Window, StringTable.windowCaption);
 		return this;
 	}
 
 	private void Window(int id)
 	{
 		GUILayout.FlexibleSpace();
-		GUILayout.Label(windowText, normalLabelStyle);
+		GUILayout.Label(StringTable.windowText, StringTable.normalLabelStyle);
 		GUILayout.FlexibleSpace();
 		if(GUILayout.Button("Main menu")) Application.LoadLevel(0);
 	}

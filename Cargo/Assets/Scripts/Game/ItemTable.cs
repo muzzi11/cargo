@@ -8,16 +8,8 @@ public interface ItemTableListener
 
 public class ItemTable
 {
-	private const string tableItemStyle = "tableItem", leftAlignedStyle = "leftAlignedLabel";
-	private const string nameCaption = "Name:";
-	private const string quantityCaption = "Qnty:";
-	private const string priceCaption = "Price:";
-	private const string purchasePriceCaption = "Purchase price:";
-	private const string originCaption = "Origin:";
-
 	private List<string[]> table = new List<string[]>();
 	private List<Item> items = new List<Item>();
-
 	private List<ItemTableListener> listeners = new List<ItemTableListener>();
 
 	private Vector2 scrollPosition;
@@ -63,13 +55,13 @@ public class ItemTable
 		{
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(nameCaption, leftAlignedStyle, GUILayout.ExpandWidth(true));
-				GUILayout.Label(quantityCaption, GUILayout.Width(50));
-				GUILayout.Label(priceCaption, GUILayout.Width(50));
+				GUILayout.Label(StringTable.nameHeaderCaption, StringTable.leftAlignedLabelStyle, GUILayout.ExpandWidth(true));
+				GUILayout.Label(StringTable.quantityHeaderCaption, GUILayout.Width(50));
+				GUILayout.Label(StringTable.priceHeaderCaption, GUILayout.Width(50));
 				if (table[0].Length == 5)
 				{
-					GUILayout.Label(purchasePriceCaption, GUILayout.Width(100));
-					GUILayout.Label(originCaption, GUILayout.Width(80));
+					GUILayout.Label(StringTable.purchasePriceHeaderCaption, GUILayout.Width(100));
+					GUILayout.Label(StringTable.originHeaderCaption, GUILayout.Width(80));
 				}
 			}
 			GUILayout.EndHorizontal();
@@ -79,7 +71,7 @@ public class ItemTable
 				string[] row = table[i];
 				GUILayout.BeginHorizontal();
 				{
-					if (GUILayout.Button(row[0], tableItemStyle, GUILayout.ExpandWidth(true)))
+					if (GUILayout.Button(row[0], StringTable.tableItemStyle, GUILayout.ExpandWidth(true)))
 				    {
 						foreach(var listener in listeners)
 						{

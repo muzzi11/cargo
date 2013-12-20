@@ -12,23 +12,6 @@ public class Space : MonoBehaviour
 
 	private List<Planet> planets = new List<Planet>();
 
-	private readonly string[] planetNames = 
-	{
-		"Boclite",
-		"Covis",
-		"Eskosie",
-		"Edreshan",
-		"Otrade",
-		"Gahiri",
-		"Peynides",
-		"Bolara",
-		"Fophus",
-		"Asnion",
-		"Eflora",
-		"Ustarvis",
-		"Soyanus"
-	};
-
 	// Use this for initialization
 	void Start()
 	{
@@ -59,7 +42,7 @@ public class Space : MonoBehaviour
 
 		Random.seed = seed;
 
-		for(int i = 0; i < planetNames.Length; ++i)
+		for(int i = 0; i < StringTable.planetNames.Length; ++i)
 		{
 			Vector2 position = new Vector2();
 			
@@ -73,7 +56,7 @@ public class Space : MonoBehaviour
 			// Cycle through planet sprites
 			gameObject.GetComponent<SpriteRenderer>().sprite = planetSprites[i % planetSprites.Length];
 			
-			planets.Add(new Planet(position, planetNames[i]));
+			planets.Add(new Planet(position, StringTable.planetNames[i]));
 		}
 	}
 }

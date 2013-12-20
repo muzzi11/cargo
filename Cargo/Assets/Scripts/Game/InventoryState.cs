@@ -9,16 +9,6 @@ public class InventoryState : State
 	private Vector2 scrollPosition;
 	private List<string[]> table = new List<string[]> ();
 
-	private const string backCaption = "Back";
-	private const string inventoryCaption = "Inventory";
-	private const string balanceCaption = "Balance: {0}";
-	private const string cargoCaption = "Cargo space: {0}";
-	private const string normalStyle = "normalLabel", tableItemStyle = "tableItem", leftAlignedStyle = "leftAlignedLabel";
-	private const string nameCaption = "Name:";
-	private const string quantityCaption = "Qnty:";
-	private const string purchasePriceCaption = "Price:";
-	private const string originCaption = "Origin:";
-	
 	private Balance balance;
 	private Cargo cargo;
 
@@ -40,7 +30,7 @@ public class InventoryState : State
 			return returnToState;
 		}
 
-		GUI.Window(0, new Rect(0, 0, width, height), InventoryWindow, inventoryCaption);
+		GUI.Window(0, new Rect(0, 0, width, height), InventoryWindow, StringTable.inventoryCaption);
 
 		return this;
 	}
@@ -76,10 +66,10 @@ public class InventoryState : State
 			{
 				GUILayout.BeginHorizontal();
 				{
-					GUILayout.Label(nameCaption, leftAlignedStyle, GUILayout.ExpandWidth(true));
-					GUILayout.Label(originCaption, leftAlignedStyle, GUILayout.Width(80));
-					GUILayout.Label(quantityCaption, GUILayout.Width(50));
-					GUILayout.Label(purchasePriceCaption, GUILayout.Width(50));
+					GUILayout.Label(StringTable.nameHeaderCaption, StringTable.leftAlignedLabelStyle, GUILayout.ExpandWidth(true));
+					GUILayout.Label(StringTable.originHeaderCaption, StringTable.leftAlignedLabelStyle, GUILayout.Width(80));
+					GUILayout.Label(StringTable.quantityHeaderCaption, GUILayout.Width(50));
+					GUILayout.Label(StringTable.priceHeaderCaption, GUILayout.Width(50));
 				}
 				GUILayout.EndHorizontal();
 
@@ -100,14 +90,14 @@ public class InventoryState : State
 
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(string.Format(balanceCaption, balance.GetBalance()), normalStyle);
-				GUILayout.Label(string.Format(cargoCaption, cargo.GetRemainingSpace()), normalStyle);
+				GUILayout.Label(string.Format(StringTable.balanceCaption, balance.GetBalance()), StringTable.normalLabelStyle);
+				GUILayout.Label(string.Format(StringTable.cargoCaption, cargo.GetRemainingSpace()), StringTable.normalLabelStyle);
 			}
 			GUILayout.EndHorizontal();
 			
 			GUILayout.BeginHorizontal();
 			{
-				if(GUILayout.Button(backCaption)) returnToPrevState = true;
+				if(GUILayout.Button(StringTable.backCaption)) returnToPrevState = true;
 			}
 			GUILayout.EndHorizontal();
 		}
