@@ -17,7 +17,8 @@ public class SaveGame
 		posY = "posY",
 		seed = "seed",
 		balance = "balance",
-		cargo = "cargo";
+		cargo = "cargo",
+		mute = "mute";
 
 	public static Data gameData = null;
 
@@ -46,6 +47,16 @@ public class SaveGame
 	public static void SaveCargo(string serialized)
 	{
 		PlayerPrefs.SetString(cargo, serialized);
+	}
+
+	public static void SaveSettings(AudioMute muteMode)
+	{
+		PlayerPrefs.SetInt(mute, (int)muteMode);
+	}
+
+	public static AudioMute GetSoundSetting()
+	{
+		return (AudioMute)PlayerPrefs.GetInt(mute, (int)AudioMute.Off);
 	}
 
 	// Use GetData to get the actual data if there is any
