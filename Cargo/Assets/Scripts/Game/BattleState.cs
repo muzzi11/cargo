@@ -100,7 +100,7 @@ public class BattleState : State
 		battleObjects = GameObject.Find("Battle Objects").GetComponent<BattleObjects>();
 
 		playerObject = battleObjects.InstantiateShip(0, GetPlayerPosition());
-		enemyObject = battleObjects.InstantiateShip(2, GetEnemyPosition());
+		enemyObject = battleObjects.InstantiateShip(Random.Range(1, 3), GetEnemyPosition());
 
 		FacePlayerAndEnemy();
 

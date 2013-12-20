@@ -23,8 +23,9 @@ public class Game : MonoBehaviour, BattleListener
 	// Use this for initialization
 	void Start()
 	{
-	
-		ship = new Ship(new Vector2(0, 0));
+		SaveGame.LoadData();
+
+		ship = new Ship();
 		cargo = new Cargo(200);
 		space = GameObject.Find("Space").GetComponent<Space>();
 		space.GeneratePlanets(cameraBounds);
@@ -32,6 +33,8 @@ public class Game : MonoBehaviour, BattleListener
 		currentState = new NavigationState(space, ship, balance, cargo);
 		//currentState = new BattleState(currentState, ship);
 		playerNode = GameObject.Find("Player Node");
+
+		StartCoroutine("Save");
 	}
 	
 	// Update is called once per frame
@@ -76,6 +79,7 @@ public class Game : MonoBehaviour, BattleListener
 	public void ShipDestroyed()
 	{
 		gameOver = true;
+		SaveGame.RemoveSaveGame();
 	}
 
 	private void UpdateCameraPosition()
@@ -113,5 +117,14 @@ public class Game : MonoBehaviour, BattleListener
 	{
 		if (audio.isPlaying)
 			audio.Stop();
+	}
+
+	IEnumerator Save()
+	{
+		while(!gameOver)
+		{
+			SaveGame.SavePosition(ship.Position);
+			yield return new WaitForSeconds(2.0f);
+		}
 	}
 }

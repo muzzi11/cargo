@@ -8,19 +8,24 @@ public class Ship
 	private float speed = 3.0f;
 	private Vector2 position, destination;
 
-	public Ship(Vector2 position)
+	public Ship()
 	{
-		this.position = new Vector2(position.x, position.y);
-		destination = new Vector2(position.x, position.y);
-
 		damage = 100;
 		hull = maxHull = 300;
 		shield = maxShield = 150;
+
+		if(SaveGame.gameData != null)
+		{
+			position = SaveGame.gameData.position;
+			hull = SaveGame.gameData.hull;
+			shield = SaveGame.gameData.shield;
+		}
+		destination = new Vector2(position.x, position.y);
 	}
 
 	public static Ship GenerateRandomShip(int level)
 	{
-		Ship ship = new Ship(Vector2.zero);
+		Ship ship = new Ship();
 		int points = (level + 10) * 500 / 10;
 		float damageFraction = Random.Range(0.1f, 0.4f);
 		float damagePenalty = 0.3f;
@@ -37,7 +42,7 @@ public class Ship
 		if(shield >= damage)
 		{
 			shield -= damage;
-			return 0;
+			damage = 0;
 		}
 		else
 		{
@@ -45,8 +50,10 @@ public class Ship
 			shield = 0;
 			hull -= damage;
 			if(hull < 0) hull = 0;
-			return damage;
 		}
+
+		SaveGame.SaveShipStatus(hull, shield);
+		return damage;
 	}
 
 	public bool Alive
