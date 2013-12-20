@@ -207,7 +207,7 @@ public class Cargo
 			builder.Append(record.Serialize());
 			builder.Append(seperator);
 		}
-		builder.Remove(builder.Length - 1, 1);
+		if(records.Count > 0) builder.Length -= 1;
 
 		return builder.ToString();
 	}
