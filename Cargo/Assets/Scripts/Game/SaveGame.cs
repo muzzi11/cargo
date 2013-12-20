@@ -76,6 +76,7 @@ public class SaveGame
 
 	public static void RemoveSaveGame()
 	{
+		gameData = null;
 		PlayerPrefs.DeleteKey(seed);
 	}
 }
