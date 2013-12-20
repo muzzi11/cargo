@@ -8,6 +8,7 @@ public class Game : MonoBehaviour, BattleListener
 	public Rect cameraBounds;
 	public GUISkin guiSkin;
 	public AudioClip[] audioClips;
+	public AudioClip battleHorn, battleMusic;
 
 	private float distSinceLastBattle = 0.0f;
 	private bool gameOver = false;
@@ -43,8 +44,9 @@ public class Game : MonoBehaviour, BattleListener
 		playerNode.transform.position = ship.Position;
 		UpdateCameraPosition();
 		
-		if (!audio.isPlaying) playMusic();
-		
+		if(!audio.isPlaying && !(currentState is BattleState)) PlayMusic();
+		if(!audio.isPlaying && (currentState is BattleState)) PlayBattleMusic();
+
 		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
 
 		// Random battle event
@@ -53,6 +55,7 @@ public class Game : MonoBehaviour, BattleListener
 			distSinceLastBattle -= battleDistanceInterval;
 			if(Random.value <= battleChance)
 			{
+				PlayBattleHorn();
 				ship.Stop();
 				currentState = new BattleState(this, currentState, ship);
 			}
@@ -86,10 +89,29 @@ public class Game : MonoBehaviour, BattleListener
 		Camera.main.transform.position = cameraPos;
 	}
 
-	private void playMusic()
+	private void PlayMusic()
 	{
 		if (audioClips.Length == 0) return;
 		audio.clip = audioClips[Random.Range(0, audioClips.Length)];
 		audio.Play();
+	}
+
+	private void PlayBattleHorn()
+	{
+		StopMusic();
+		audio.clip = battleHorn;
+		audio.Play();
+	}
+
+	private void PlayBattleMusic()
+	{
+		audio.clip = battleMusic;
+		audio.Play();
+	}
+
+	private void StopMusic()
+	{
+		if (audio.isPlaying)
+			audio.Stop();
 	}
 }

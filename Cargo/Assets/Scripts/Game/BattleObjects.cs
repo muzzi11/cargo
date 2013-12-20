@@ -8,7 +8,7 @@ public class BattleObjects : MonoBehaviour
 		Fighter,
 		Raider
 	}
-
+	public AudioClip laserBeam;
 	public ShipPrefab fighterPrefab, raiderPrefab;
 	public GameObject damageTextPrefab;
 	public Laserbeam laserbeamPrefab;
@@ -63,5 +63,15 @@ public class BattleObjects : MonoBehaviour
 		var laserbeam = Instantiate(laserbeamPrefab) as Laserbeam;
 		laserbeam.SetRay(start, end);
 		Debug.Log (laserbeam);
+		PlayLaser();
+	}
+
+	private void PlayLaser()
+	{
+		if (audio.isPlaying)
+			audio.Stop();
+
+		audio.clip = laserBeam;
+		audio.Play();
 	}
 }

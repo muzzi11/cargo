@@ -75,7 +75,7 @@ public class Cargo
 		{
 			if (record.Item.Equals(item) && record.Origin.Equals(origin))
 			{
-				if (record.Quantity < quantity)				
+				if (record.Quantity > quantity)				
 					record.Quantity -= quantity;
 				else
 					temp = record;
