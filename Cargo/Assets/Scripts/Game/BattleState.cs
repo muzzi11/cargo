@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+public interface BattleListener
+{
+	void ShipDestroyed();
+}
+
 public class BattleState : State
 {
 	private enum Action
@@ -9,22 +14,44 @@ public class BattleState : State
 		Flee
 	}
 
-	class Turn
+	private enum Windows : int
 	{
+		None = -1,
+		Intro,
+		Flee
+	}
+
+	// Helper class to keep track of turns
+	class Turns
+	{
+		const float turnDelay = 2.0f;
 		private float turnStartTime = Time.time;
-		private bool playerTurn = true, ready = true;
+		private bool playerTurn = true, ready = true, end = false;
 
 		public void Update()
 		{
-			if(Time.time >= turnStartTime) ready = true;
+			if(!end && Time.time > turnStartTime) ready = true;
 		}
 
 		public void SwitchTurns()
 		{
-			const float turnDelay = 2.0f;
 			turnStartTime = Time.time + turnDelay;
 			ready = false;
 			playerTurn = !playerTurn;
+		}
+
+		// Ends all turns, no more turns after this point
+		public void EndTurns()
+		{
+			turnStartTime = Time.time + turnDelay;
+			end = true;
+			ready = false;
+		}
+
+		// True when End() is called and turnDelay has passed
+		public bool Finished
+		{
+			get{ return end && Time.time > turnStartTime; }
 		}
 
 		public bool PlayerTurn
@@ -39,17 +66,38 @@ public class BattleState : State
 	}
 
 	private readonly int collisionMask;
-	private const string attackCaption = "Attack";
-	private const string fleeCaption = "Flee";
-	private const string absorbCaption = "Absorb";
-	private const string hullCaption = "HULL {0}/{1}";
-	private const string shieldCaption = "SHIELD {0}/{1}";
-	private const string hullLabelStyle = "hullLabel";
-	private const string shieldLabelStyle = "shieldLabel";
-	private const string boxStyle = "box";
+	private const string 
+		okCatpion = "OK",
+		attackCaption = "Attack",
+		fleeCaption = "Flee",
+		absorbCaption = "Absorb",
+		hullCaption = "HULL {0}/{1}",
+		shieldCaption = "SHIELD {0}/{1}",
+		statusText = "The enemy is charging weapons.",
+		hullLabelStyle = "hullLabel",
+		shieldLabelStyle = "shieldLabel",
+		boxStyle = "box",
+		normalLabelStyle = "normalLabel";
+
+	private static readonly string[] windowTitles = new string[]
+	{
+		"A wild raider apears!", 
+		"Fleeing failed"
+	};
+
+	private static readonly string[] windowTexts = new string[]
+	{
+		"Destroy the enemy before it destroys you or make an attempt to flee.",
+		"Your attempt to flee has failed."
+	};
+
+	private readonly GUI.WindowFunction[] windowFunctions;
+	private Windows currentWindow = Windows.Intro;
 
 	private readonly int width, height;
 	private readonly State returnToState;
+
+	private const float fleeChance = 0.2f;
 
 	private Ship playerShip, enemyShip;
 
@@ -57,11 +105,13 @@ public class BattleState : State
 	private GameObject playerNode;
 	private ShipPrefab playerObject, enemyObject;
 	
-	private Turn turn = new Turn();
-	private bool battleOver = false;
+	private Turns turns = new Turns();
 
-	public BattleState(State returnToState, Ship ship)
+	private readonly BattleListener listener;
+
+	public BattleState(BattleListener listener, State returnToState, Ship ship)
 	{
+		this.listener = listener;
 		this.returnToState = returnToState;
 		width = Screen.width;
 		height = Screen.height;
@@ -115,7 +165,7 @@ public class BattleState : State
 		string enemyHull = string.Format(hullCaption, enemyShip.Hull, enemyShip.MaxHull);
 		string enemyShield = string.Format(shieldCaption, enemyShip.Shield, enemyShip.MaxShield);
 
-		turn.Update();
+		turns.Update();
 
 		GUILayout.BeginArea(new Rect(5, 5, width-10, height-10));
 		{
@@ -141,48 +191,44 @@ public class BattleState : State
 
 				GUILayout.BeginHorizontal();
 				{
-					if(GUILayout.Button(attackCaption)) PerformAction(Action.Attack);
-					if(GUILayout.Button(fleeCaption)) PerformAction(Action.Flee);
+					if(turns.PlayerTurn)
+					{
+						if(GUILayout.Button(attackCaption)) Attack(playerShip, enemyShip, playerObject, enemyObject);
+						if(GUILayout.Button(fleeCaption)) Flee();
+					}
+					else
+					{
+						GUILayout.Label(statusText, hullLabelStyle);
+					}
 				}
 				GUILayout.EndHorizontal();
 			}
 			GUILayout.EndVertical();
 		}
 		GUILayout.EndArea();
-
-		if(turn.EnemyTurn)
+		
+		if(currentWindow != Windows.None)
 		{
-			Attack(enemyShip, playerShip, enemyObject, playerObject);
-			turn.SwitchTurns();
+			GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ModalWindow, windowTitles[(int)currentWindow]);
+		}
+		else
+		{
+			if(turns.EnemyTurn) Attack(enemyShip, playerShip, enemyObject, playerObject);
 		}
 
-		if(battleOver)
+		if(turns.Finished && Event.current.type == EventType.Repaint)
 		{
 			playerNode.renderer.enabled = true;
 			ShipPrefab.Destroy(playerObject.gameObject);
 			ShipPrefab.Destroy(enemyObject.gameObject);
+
+			if(playerShip.Alive) playerShip.ReplenishShield();
+			else listener.ShipDestroyed();
+
+			return returnToState;
 		}
 
-		return battleOver ? returnToState : this;
-	}
-
-	private void PerformAction(Action action)
-	{
-		if(turn.PlayerTurn)
-		{
-			switch(action)
-			{
-			case Action.Attack:
-				Attack(playerShip, enemyShip, playerObject, enemyObject);
-				if(!enemyShip.Alive) battleOver = true;
-				break;
-
-			case Action.Flee:
-				break;
-			}
-
-			turn.SwitchTurns();
-		}
+		return this;
 	}
 
 	private void Attack(Ship attacker, Ship target, ShipPrefab attackerObject, ShipPrefab targetObject)
@@ -190,6 +236,8 @@ public class BattleState : State
 		int damage = target.TakeDamage(attacker.Damage);
 		string damageText = damage > 0 ? damage.ToString() : absorbCaption;
 		var position = Camera.main.WorldToViewportPoint(targetObject.transform.position);
+
+		if(!target.Alive) turns.EndTurns();
 
 		battleObjects.InstantiateDamageText(damageText, position);
 
@@ -200,5 +248,28 @@ public class BattleState : State
 			var hit = Physics2D.Linecast(laserPos, targetPos, ~(1 << collisionMask));
 			battleObjects.InstantiateLaserbeam(laserPos, hit.point);
 		}
+
+		turns.SwitchTurns();
+	}
+
+	private void Flee()
+	{
+		if(Random.value <= fleeChance) turns.EndTurns();
+		else currentWindow = Windows.Flee;
+
+		turns.SwitchTurns();
+	}
+
+	private void ModalWindow(int id)
+	{
+		GUILayout.BeginVertical();
+		{
+			GUILayout.Space(40);
+			GUILayout.Label(windowTexts[(int)currentWindow], normalLabelStyle);
+			GUILayout.FlexibleSpace();
+
+			if(GUILayout.Button(okCatpion)) currentWindow = Windows.None;
+		}
+		GUILayout.EndVertical();
 	}
 }

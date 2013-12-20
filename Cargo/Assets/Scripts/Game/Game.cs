@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Game : MonoBehaviour
+public class Game : MonoBehaviour, BattleListener
 {
+	public float battleDistanceInterval;
+	public float battleChance;
 	public Rect cameraBounds;
 	public GUISkin guiSkin;
+
+	private float distSinceLastBattle = 0.0f;
+	private bool gameOver = false;
 
 	private Ship ship;
 	private Cargo cargo;
@@ -22,24 +27,46 @@ public class Game : MonoBehaviour
 		space.GeneratePlanets(cameraBounds);
 		balance = new Balance();
 		currentState = new NavigationState(space, ship, balance, cargo);
-		currentState = new BattleState(currentState, ship);
+		//currentState = new BattleState(currentState, ship);
 		playerNode = GameObject.Find("Player Node");
 	}
 	
 	// Update is called once per frame
 	void Update()
 	{
-		ship.Update();
+		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
+
+		distSinceLastBattle += ship.Update();
+
 		playerNode.transform.position = ship.Position;
 		UpdateCameraPosition();
 
-		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
+		// Random battle event
+		if(distSinceLastBattle >= battleDistanceInterval)
+		{
+			distSinceLastBattle -= battleDistanceInterval;
+			if(Random.value <= battleChance)
+			{
+				ship.Stop();
+				currentState = new BattleState(this, currentState, ship);
+			}
+		}
 	}
 
 	void OnGUI()
 	{
 		GUI.skin = guiSkin;
 		currentState = currentState.UpdateState();
+		if(gameOver)
+		{
+			gameOver = false;
+			currentState = new GameOverState();
+		}
+	}
+
+	public void ShipDestroyed()
+	{
+		gameOver = true;
 	}
 
 	private void UpdateCameraPosition()
