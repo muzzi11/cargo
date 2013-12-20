@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class BattleState : State
 {
@@ -38,6 +38,7 @@ public class BattleState : State
 		}
 	}
 
+	private readonly int collisionMask;
 	private const string attackCaption = "Attack";
 	private const string fleeCaption = "Flee";
 	private const string absorbCaption = "Absorb";
@@ -47,13 +48,14 @@ public class BattleState : State
 	private const string shieldLabelStyle = "shieldLabel";
 	private const string boxStyle = "box";
 
-	private int width, height;
-	private State returnToState;
+	private readonly int width, height;
+	private readonly State returnToState;
 
 	private Ship playerShip, enemyShip;
 
 	private BattleObjects battleObjects;
-	private GameObject playerNode, playerObject, enemyObject;
+	private GameObject playerNode;
+	private ShipPrefab playerObject, enemyObject;
 	
 	private Turn turn = new Turn();
 	private bool battleOver = false;
@@ -67,10 +69,10 @@ public class BattleState : State
 		playerShip = ship;
 		enemyShip = Ship.GenerateRandomShip(1);
 
+		collisionMask = LayerMask.NameToLayer("Ships");
+
 		playerNode = GameObject.Find("Player Node");
 		battleObjects = GameObject.Find("Battle Objects").GetComponent<BattleObjects>();
-
-		Vector2 cameraPos = Camera.main.transform.position;
 
 		playerObject = battleObjects.InstantiateShip(0, GetPlayerPosition());
 		enemyObject = battleObjects.InstantiateShip(2, GetEnemyPosition());
@@ -84,7 +86,7 @@ public class BattleState : State
 	private Vector2 GetPlayerPosition()
 	{
 		float cameraHeight = -Camera.main.transform.position.z;
-		var screenPosition = new Vector3(100, 250, cameraHeight);
+		var screenPosition = new Vector3(100, 175, cameraHeight);
 
 		return Camera.main.ScreenToWorldPoint(screenPosition);
 	}
@@ -140,13 +142,6 @@ public class BattleState : State
 				GUILayout.BeginHorizontal();
 				{
 					if(GUILayout.Button(attackCaption)) PerformAction(Action.Attack);
-					GUILayout.Button("S.O.S");
-				}
-				GUILayout.EndHorizontal();
-
-				GUILayout.BeginHorizontal();
-				{
-					GUILayout.Button("Drop Cargo");
 					if(GUILayout.Button(fleeCaption)) PerformAction(Action.Flee);
 				}
 				GUILayout.EndHorizontal();
@@ -157,19 +152,15 @@ public class BattleState : State
 
 		if(turn.EnemyTurn)
 		{
-			int damage = playerShip.TakeDamage(enemyShip.Damage);
-			string damageText = damage > 0 ? damage.ToString() : absorbCaption;
-			var position = Camera.main.WorldToViewportPoint(playerObject.transform.position);
-			battleObjects.InstantiateDamageText(damageText, position);
-
+			Attack(enemyShip, playerShip, enemyObject, playerObject);
 			turn.SwitchTurns();
 		}
 
 		if(battleOver)
 		{
 			playerNode.renderer.enabled = true;
-			BattleObjects.Destroy(playerObject);
-			BattleObjects.Destroy(enemyObject);
+			ShipPrefab.Destroy(playerObject.gameObject);
+			ShipPrefab.Destroy(enemyObject.gameObject);
 		}
 
 		return battleOver ? returnToState : this;
@@ -182,11 +173,7 @@ public class BattleState : State
 			switch(action)
 			{
 			case Action.Attack:
-				int damage = enemyShip.TakeDamage(playerShip.Damage);
-				string damageText = damage > 0 ? damage.ToString() : absorbCaption;
-				var position = Camera.main.WorldToViewportPoint(enemyObject.transform.position);
-				battleObjects.InstantiateDamageText(damageText, position);
-
+				Attack(playerShip, enemyShip, playerObject, enemyObject);
 				if(!enemyShip.Alive) battleOver = true;
 				break;
 
@@ -195,6 +182,23 @@ public class BattleState : State
 			}
 
 			turn.SwitchTurns();
+		}
+	}
+
+	private void Attack(Ship attacker, Ship target, ShipPrefab attackerObject, ShipPrefab targetObject)
+	{
+		int damage = target.TakeDamage(attacker.Damage);
+		string damageText = damage > 0 ? damage.ToString() : absorbCaption;
+		var position = Camera.main.WorldToViewportPoint(targetObject.transform.position);
+
+		battleObjects.InstantiateDamageText(damageText, position);
+
+		var laserPostions = attackerObject.GetLaserbeamPositions();
+		Vector2 targetPos = targetObject.transform.position;
+		foreach(var laserPos in laserPostions)
+		{
+			var hit = Physics2D.Linecast(laserPos, targetPos, ~(1 << collisionMask));
+			battleObjects.InstantiateLaserbeam(laserPos, hit.point);
 		}
 	}
 }
