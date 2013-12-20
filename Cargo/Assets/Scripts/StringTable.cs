@@ -10,6 +10,8 @@ public static class StringTable
 		normalLabelStyle = "normalLabel",
 		tableItemStyle = "tableItem",
 		leftAlignedLabelStyle = "leftAlignedLabel",
+		titleScreenButtonStyle = "titleScreenButton",
+		titleScreenLabelStye = "titleScreenLabel",
 
 		//Auction house & inventory
 		buyCaption = "Buy",
