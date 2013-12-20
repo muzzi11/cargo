@@ -18,13 +18,16 @@ public class TitleScreenState : State
 
 	public State UpdateState()
 	{
-		GUI.BeginGroup(new Rect(width / 2 - 100, height - 200, 200, 100));
+		GUILayout.BeginArea(new Rect(0, 0, width, height));
 		{
-			if(GUI.Button(new Rect(0, 0, 200, 40), startGameCaption, buttonStyle)) Application.LoadLevel(1);
+			GUILayout.FlexibleSpace();
 
-			if(GUI.Button(new Rect(0, 50, 200, 40), optionsCaption, buttonStyle)) return optionsState;
+			if(GUILayout.Button(startGameCaption, buttonStyle)) Application.LoadLevel(1);
+			if(GUILayout.Button(optionsCaption, buttonStyle)) return optionsState;
+
+			GUILayout.Space(50);
 		}
-		GUI.EndGroup();
+		GUILayout.EndArea();
 
 		return this;
 	}

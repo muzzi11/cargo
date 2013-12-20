@@ -23,7 +23,7 @@ public class Ship
 		Ship ship = new Ship(Vector2.zero);
 		int points = (level + 10) * 500 / 10;
 		float damageFraction = Random.Range(0.1f, 0.4f);
-		float damagePenalty = 2.3f;
+		float damagePenalty = 0.3f;
 
 		ship.damage = Mathf.RoundToInt(damageFraction * damagePenalty * points);
 		ship.shield = ship.maxShield = Mathf.RoundToInt((1.0f - damageFraction) * points / 3.0f);
