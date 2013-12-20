@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum AudioMute : int
+{
+	On,
+	Off
+};
+
 public class OptionsState : State
 {
 	private int width, height;
 	private State returnToState;
 
-	enum AudioMute : int
-	{
-		On,
-		Off
-	};
 	private AudioMute mode = AudioMute.Off;
 	private AudioMute Mode
 	{
@@ -27,6 +28,7 @@ public class OptionsState : State
 		width = Screen.width;
 		height = Screen.height;
 		this.returnToState = returnToState;
+		Mode = SaveGame.GetSoundSetting();
 	}
 
 	public State UpdateState()
@@ -41,7 +43,14 @@ public class OptionsState : State
 				string[] toolbarStrings = {StringTable.onCaption, StringTable.offCaption};
 				Mode = (AudioMute)GUILayout.Toolbar((int)mode, toolbarStrings);
 
-				if(GUILayout.Button(StringTable.backCaption, StringTable.titleScreenButtonStyle)) return returnToState;
+				GUILayout.Space(50);
+
+				if(GUILayout.Button(StringTable.backCaption, StringTable.titleScreenButtonStyle))
+				{
+					SaveGame.SaveSettings(mode);
+					return returnToState;
+				}
+
 				GUILayout.Space(50);
 			}
 			GUILayout.EndVertical();
