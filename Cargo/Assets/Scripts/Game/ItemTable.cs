@@ -8,7 +8,12 @@ public interface ItemTableListener
 
 public class ItemTable
 {
-	private const string tableItemStyle = "tableItem";
+	private const string tableItemStyle = "tableItem", leftAlignedStyle = "leftAlignedLabel";
+	private const string nameCaption = "Name:";
+	private const string quantityCaption = "Qnty:";
+	private const string priceCaption = "Price:";
+	private const string purchasePriceCaption = "Purchase price:";
+	private const string originCaption = "Origin:";
 
 	private List<string[]> table = new List<string[]>();
 	private List<Item> items = new List<Item>();
@@ -22,20 +27,21 @@ public class ItemTable
 		listeners.Add(listener);
 	}
 	
-	public void LoadData(List<Item> items, List<int> quantities, List<int> values, List<string> origins = null)
+	public void LoadData(List<Item> items, List<int> quantities, List<int> prices, List<int> purchasePrices = null, List<string> origins = null)
 	{
 		table.Clear();
 		this.items = items;
 
 		for(int i = 0; i < items.Count; ++i)
 		{	
-			if(origins != null)
+			if(origins != null && purchasePrices != null)
 			{
 				table.Add(new string[]
 				          {
 					items[i].Name,
 					'x' + quantities[i].ToString(),
-					'$' + values[i].ToString(),
+					'$' + prices[i].ToString(),
+					'$' + purchasePrices[i].ToString(),
 					origins[i]
 				});
 				continue;	
@@ -44,17 +50,30 @@ public class ItemTable
 			{
 				items[i].Name,
 				'x' + quantities[i].ToString(),
-				'$' + values[i].ToString()
+				'$' + prices[i].ToString()
 			});
 		}
-
-
 	}
-	
+
 	public void Render()
-	{		
+	{	
+		if (table.Count == 0) return;
+
 		scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 		{
+			GUILayout.BeginHorizontal();
+			{
+				GUILayout.Label(nameCaption, leftAlignedStyle, GUILayout.ExpandWidth(true));
+				GUILayout.Label(quantityCaption, GUILayout.Width(50));
+				GUILayout.Label(priceCaption, GUILayout.Width(50));
+				if (table[0].Length == 5)
+				{
+					GUILayout.Label(purchasePriceCaption, GUILayout.Width(100));
+					GUILayout.Label(originCaption, GUILayout.Width(80));
+				}
+			}
+			GUILayout.EndHorizontal();
+
 			for(int i = 0; i < table.Count; i++)
 			{
 				string[] row = table[i];
@@ -67,10 +86,12 @@ public class ItemTable
 							listener.ItemClicked(items[i]);
 						}
 					}
-					for(int k = 1; k < row.Length; k++)
+					GUILayout.Label(row[1], GUILayout.Width(50));
+					GUILayout.Label(row[2], GUILayout.Width(50));
+					if (row.Length == 5)
 					{
-						int width = (k == row.Length - 1) ? 100 : 50;
-						GUILayout.Label(row[k], GUILayout.Width(width));
+						GUILayout.Label(row[3], GUILayout.Width(100));
+						GUILayout.Label(row[4], GUILayout.Width(80));
 					}
 				}
 				GUILayout.EndHorizontal();

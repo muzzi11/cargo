@@ -5,14 +5,14 @@ using System.Linq;
 public class CargoRecord
 {
 	private Item item;
-	private int quantity, costPrice;
+	private int quantity, purchasePrice;
 	private string origin;
 
-	public CargoRecord(Item item, int quantity, int costPrice, string origin)
+	public CargoRecord(Item item, int quantity, int purchasePrice, string origin)
 	{
 		this.item = item;
 		this.quantity = quantity;
-		this.costPrice = costPrice;
+		this.purchasePrice = purchasePrice;
 		this.origin = origin;
 	}
 
@@ -27,9 +27,9 @@ public class CargoRecord
 		set { quantity = value; }
 	}
 
-	public int CostPrice
+	public int PurchasePrice
 	{
-		get { return costPrice; }
+		get { return purchasePrice; }
 	}
 
 	public string Origin
@@ -48,7 +48,7 @@ public class Cargo
 		this.maxVolume = maxVolume;
 	}
 
-	public bool AddItem(Item item, int quantity, int costPrice, string origin)
+	public bool AddItem(Item item, int quantity, int purchasePrice, string origin)
 	{
 		if (currentvolume + item.Volume * quantity > maxVolume) return false;
 		currentvolume += item.Volume * quantity;
@@ -61,7 +61,7 @@ public class Cargo
 				return true;
 			}
 		}
-		records.Add(new CargoRecord(item, quantity, costPrice, origin));
+		records.Add(new CargoRecord(item, quantity, purchasePrice, origin));
 		records = records.OrderBy(rec => rec.Item.Name).ToList();
 		return true;
 	}
@@ -127,7 +127,7 @@ public class Cargo
 	{
 		List<int> prices = new List<int> ();
 		foreach (CargoRecord record in records)
-			prices.Add(record.CostPrice);
+			prices.Add(record.PurchasePrice);
 		return prices;
 	}
 
@@ -137,6 +137,14 @@ public class Cargo
 		foreach (CargoRecord record in records)
 			origins.Add(record.Origin);
 		return origins;
+	}
+
+	public string GetOrigin(Item item)
+	{
+		foreach (CargoRecord record in records)
+			if (record.Item.Equals(item))
+				return record.Origin;
+		return "";
 	}
 
 }

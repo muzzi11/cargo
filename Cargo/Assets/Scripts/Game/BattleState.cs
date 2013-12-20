@@ -198,6 +198,8 @@ public class BattleState : State
 		foreach(var laserPos in laserPostions)
 		{
 			var hit = Physics2D.Linecast(laserPos, targetPos, ~(1 << collisionMask));
+			Debug.Log(laserPos);
+			Debug.Log(hit.point);
 			battleObjects.InstantiateLaserbeam(laserPos, hit.point);
 		}
 	}
