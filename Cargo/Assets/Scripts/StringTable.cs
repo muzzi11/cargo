@@ -4,12 +4,16 @@ public static class StringTable
 		//General
 		backCaption = "Back",
 		okCaption = "OK",
+		onCaption = "On",
+		offCaption = "Off",
 
 		//Styles
 		boxStyle = "box",
 		normalLabelStyle = "normalLabel",
 		tableItemStyle = "tableItem",
 		leftAlignedLabelStyle = "leftAlignedLabel",
+		titleScreenButtonStyle = "titleScreenButton",
+		titleScreenLabelStye = "titleScreenLabel",
 
 		//Auction house & inventory
 		buyCaption = "Buy",
@@ -45,8 +49,13 @@ public static class StringTable
 
 		//Game over
 		windowCaption = "GameOver",
-		windowText = "Your ship was destroyed, you failed...";
-	
+		windowText = "Your ship was destroyed, you failed...",
+
+		//Menu
+		startGameCaption = "Start Game",
+		optionsCaption = "Option",
+		muteCaption = "Mute sound";
+
 	public static readonly string[] 
 		//Auction house
 		orderWindowTitles = new string[] 

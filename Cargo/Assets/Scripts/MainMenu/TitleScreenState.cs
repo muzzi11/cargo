@@ -5,9 +5,6 @@ public class TitleScreenState : State
 {
 	private int width, height;
 	private OptionsState optionsState;
-	private string startGameCaption = "Start Game";
-	private string optionsCaption = "Option";
-	private string buttonStyle = "titleScreenButton";
 
 	public TitleScreenState()
 	{
@@ -22,8 +19,8 @@ public class TitleScreenState : State
 		{
 			GUILayout.FlexibleSpace();
 
-			if(GUILayout.Button(startGameCaption, buttonStyle)) Application.LoadLevel(1);
-			if(GUILayout.Button(optionsCaption, buttonStyle)) return optionsState;
+			if(GUILayout.Button(StringTable.startGameCaption, StringTable.titleScreenButtonStyle)) Application.LoadLevel(1);
+			if(GUILayout.Button(StringTable.optionsCaption, StringTable.titleScreenButtonStyle)) return optionsState;
 
 			GUILayout.Space(50);
 		}
