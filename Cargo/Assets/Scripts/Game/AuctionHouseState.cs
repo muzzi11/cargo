@@ -46,7 +46,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 	private const string auctionHouseCaption = "Auction house";
 	private const string balanceCaption = "Balance: {0}";
 	private const string cargoCaption = "Cargo space: {0}";
-	private const string normalLabel = "normalLabel";
+	private const string normalStyle = "normalLabel";
 	private string planetName;
 
 	private ItemTable table = new ItemTable();
@@ -124,8 +124,8 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(string.Format(balanceCaption, balance.GetBalance()), normalLabel);
-				GUILayout.Label(string.Format(cargoCaption, cargo.GetRemainingSpace()), normalLabel);
+				GUILayout.Label(string.Format(balanceCaption, balance.GetBalance()), normalStyle);
+				GUILayout.Label(string.Format(cargoCaption, cargo.GetRemainingSpace()), normalStyle);
 			}
 			GUILayout.EndHorizontal();
 

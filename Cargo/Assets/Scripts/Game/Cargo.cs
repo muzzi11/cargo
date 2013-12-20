@@ -62,6 +62,7 @@ public class Cargo
 			}
 		}
 		records.Add(new CargoRecord(item, quantity, costPrice, origin));
+		records = records.OrderBy(rec => rec.Item.Name).ToList();
 		return true;
 	}
 
@@ -122,6 +123,14 @@ public class Cargo
 		return 0;
 	}
 
+	public List<int> GetPrices()
+	{
+		List<int> prices = new List<int> ();
+		foreach (CargoRecord record in records)
+			prices.Add(record.CostPrice);
+		return prices;
+	}
+
 	public List<string> GetOrigins()
 	{
 		List<string> origins = new List<string> ();
@@ -129,4 +138,5 @@ public class Cargo
 			origins.Add(record.Origin);
 		return origins;
 	}
+
 }
