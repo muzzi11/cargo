@@ -22,6 +22,7 @@ public class Game : MonoBehaviour
 		space.GeneratePlanets(cameraBounds);
 		balance = new Balance();
 		currentState = new NavigationState(space, ship, balance, cargo);
+		currentState = new BattleState(currentState, ship);
 		playerNode = GameObject.Find("Player Node");
 	}
 	
