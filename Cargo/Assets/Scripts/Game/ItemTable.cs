@@ -22,13 +22,24 @@ public class ItemTable
 		listeners.Add(listener);
 	}
 	
-	public void LoadData(List<Item> items, List<int> quantities, List<int> values)
+	public void LoadData(List<Item> items, List<int> quantities, List<int> values, List<string> origins = null)
 	{
 		table.Clear();
 		this.items = items;
 
 		for(int i = 0; i < items.Count; ++i)
-		{			
+		{	
+			if(origins != null)
+			{
+				table.Add(new string[]
+				          {
+					items[i].Name,
+					'x' + quantities[i].ToString(),
+					'$' + values[i].ToString(),
+					origins[i]
+				});
+				continue;	
+			}
 			table.Add(new string[]
 			{
 				items[i].Name,
@@ -36,6 +47,8 @@ public class ItemTable
 				'$' + values[i].ToString()
 			});
 		}
+
+
 	}
 	
 	public void Render()
@@ -54,8 +67,11 @@ public class ItemTable
 							listener.ItemClicked(items[i]);
 						}
 					}
-					GUILayout.Label(row[1], GUILayout.Width(50));
-					GUILayout.Label(row[2], GUILayout.Width(50));
+					for(int k = 1; k < row.Length; k++)
+					{
+						int width = (k == row.Length - 1) ? 100 : 50;
+						GUILayout.Label(row[k], GUILayout.Width(width));
+					}
 				}
 				GUILayout.EndHorizontal();
 			}

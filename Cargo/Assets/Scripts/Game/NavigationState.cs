@@ -88,7 +88,7 @@ public class NavigationState : State
 				}
 				if(GUILayout.Button(auctionHouseCaption))
 				{
-					auctionHouseState.LoadEconomy(planetDestination.economy);
+					auctionHouseState.LoadPlanetaryInfo(planetDestination.economy, planetDestination.name);
 					openAuctionHouse = true;
 				}
 			}
