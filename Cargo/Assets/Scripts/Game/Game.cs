@@ -5,6 +5,7 @@ public class Game : MonoBehaviour
 {
 	public Rect cameraBounds;
 	public GUISkin guiSkin;
+	public AudioClip[] audioClips;
 
 	private Ship ship;
 	private Cargo cargo;
@@ -16,6 +17,7 @@ public class Game : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+	
 		ship = new Ship(new Vector2(0, 0));
 		cargo = new Cargo(200);
 		space = GameObject.Find("Space").GetComponent<Space>();
@@ -33,6 +35,8 @@ public class Game : MonoBehaviour
 		playerNode.transform.position = ship.Position;
 		UpdateCameraPosition();
 
+		if (!audio.isPlaying) playMusic();
+		
 		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
 	}
 
@@ -51,5 +55,12 @@ public class Game : MonoBehaviour
 		cameraPos.z = Camera.main.transform.position.z;
 		
 		Camera.main.transform.position = cameraPos;
+	}
+
+	private void playMusic()
+	{
+		if (audioClips.Length == 0) return;
+		audio.clip = audioClips[Random.Range(0, audioClips.Length)];
+		audio.Play();
 	}
 }
