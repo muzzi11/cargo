@@ -34,6 +34,11 @@ public class Game : MonoBehaviour, BattleListener
 		//currentState = new BattleState(currentState, ship);
 		playerNode = GameObject.Find("Player Node");
 
+		SaveGame.SavePosition(ship.Position);
+		SaveGame.SaveCargo(cargo.Serialize());
+		SaveGame.SaveBalance(balance.GetBalance());
+		SaveGame.SaveShipStatus(ship.Hull, ship.Shield);
+
 		StartCoroutine("Save");
 	}
 	

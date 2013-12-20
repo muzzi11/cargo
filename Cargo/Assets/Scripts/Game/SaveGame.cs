@@ -18,7 +18,8 @@ public class SaveGame
 		seed = "seed",
 		balance = "balance",
 		cargo = "cargo",
-		mute = "mute";
+		mute = "mute",
+		saved = "saved";
 
 	public static Data gameData = null;
 
@@ -37,6 +38,7 @@ public class SaveGame
 	public static void SaveSeed(int seedValue)
 	{
 		PlayerPrefs.SetInt(seed, seedValue);
+		PlayerPrefs.SetInt(saved, 1);
 	}
 
 	public static void SaveBalance(int balanceValue)
@@ -62,7 +64,7 @@ public class SaveGame
 	// Use GetData to get the actual data if there is any
 	public static void LoadData()
 	{
-		if(PlayerPrefs.HasKey(seed))
+		if(PlayerPrefs.GetInt(saved, 0) != 0)
 		{
 			gameData = new Data();
 			gameData.seed = PlayerPrefs.GetInt(seed);
@@ -77,6 +79,6 @@ public class SaveGame
 	public static void RemoveSaveGame()
 	{
 		gameData = null;
-		PlayerPrefs.DeleteKey(seed);
+		PlayerPrefs.SetInt(saved, 0);
 	}
 }
