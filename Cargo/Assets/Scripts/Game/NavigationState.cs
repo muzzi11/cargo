@@ -11,6 +11,7 @@ public class NavigationState : State
 	private Vector3 screenPosition;
 
 	private AuctionHouseState auctionHouseState; 
+	private InventoryState inventoryState;
 	private const string inventoryCaption = "Inventory";
 	private const string auctionHouseCaption = "Auction house";
 	private const string welcomeCaption = "Welcome to the planet {0}. You honor us with your visit. " +
@@ -22,6 +23,7 @@ public class NavigationState : State
 	public NavigationState(Space space, Ship ship, Balance balance, Cargo cargo)
 	{
 		this.auctionHouseState = new AuctionHouseState(this, balance, cargo);
+		this.inventoryState = new InventoryState(this, balance, cargo);
 		worldPosition = new Vector2();
 		screenPosition = new Vector3();
 
@@ -48,7 +50,8 @@ public class NavigationState : State
 		{
 			if(GUILayout.Button(inventoryCaption))
 			{
-				return this;
+				inventoryState.LoadData();
+				return inventoryState;
 			}
 			else
 			{
@@ -65,8 +68,8 @@ public class NavigationState : State
 			if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))			
 				inOrbit = true;
 
-		if(inOrbit) 
-			GUI.ModalWindow(1, new Rect(0, height/4, width, height*0.55f), PlanetWindow, planetDestination.name);
+		if(inOrbit)
+			GUI.ModalWindow(1, new Rect(0, height/4, width, height*0.6f), PlanetWindow, planetDestination.name);
 
 		return this;
 	}
@@ -90,8 +93,10 @@ public class NavigationState : State
 				}
 				if(GUILayout.Button(auctionHouseCaption))
 				{
-					auctionHouseState.LoadEconomy(planetDestination.economy);
+					auctionHouseState.LoadPlanetaryInfo(planetDestination.economy, planetDestination.name);
+					planetDestination = null;
 					openAuctionHouse = true;
+					inOrbit = false;
 				}
 			}
 			GUILayout.EndHorizontal();

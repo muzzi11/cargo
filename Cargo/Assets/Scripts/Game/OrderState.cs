@@ -12,12 +12,14 @@ public class Order
 {
 	private int quantity, itemPrice;
 	private Item item;
+	private string origin;
 
-	public Order(Item item, int itemPrice, int quantity)
+	public Order(Item item, int itemPrice, int quantity, string origin)
 	{
 		this.itemPrice = itemPrice;
 		this.item = item;
 		this.quantity = quantity;
+		this.origin = origin;
 	}
 
 	public int Quantity
@@ -39,6 +41,11 @@ public class Order
 	{
 		get { return item; }
 	}		
+
+	public string Origin
+	{ 
+		get { return origin; }
+	}
 }
 
 public class OrderState : State
@@ -82,7 +89,7 @@ public class OrderState : State
 		cargoSpaceShortCaption = "You need additional {0} cubic meters of free cargo space.",
 		summationCaption = "Transaction completed: {0} {1} have been {2} your cargo hold.";
 
-	private const string leftAlignedLabel = "leftAlignedLabel", normalLabel = "normalLabel";
+	private const string leftAlignedStyle = "leftAlignedLabel", normalStyle = "normalLabel";
 
 	private float quantitySlider = 1.0f;
 	private Vector2 scrollPosition;
@@ -151,7 +158,7 @@ public class OrderState : State
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);
-			GUILayout.Label(string.Format(dollazShortCaption, tooShort), normalLabel);
+			GUILayout.Label(string.Format(dollazShortCaption, tooShort), normalStyle);
 			
 			GUILayout.FlexibleSpace();
 			
@@ -167,7 +174,7 @@ public class OrderState : State
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);
-			GUILayout.Label(string.Format(cargoSpaceShortCaption, tooShort), normalLabel);
+			GUILayout.Label(string.Format(cargoSpaceShortCaption, tooShort), normalStyle);
 
 			GUILayout.FlexibleSpace();
 			
@@ -186,7 +193,7 @@ public class OrderState : State
 			{
 				GUILayout.BeginHorizontal();
 				{
-					GUILayout.Label(nameCaption, leftAlignedLabel, GUILayout.ExpandWidth(true));
+					GUILayout.Label(nameCaption, leftAlignedStyle, GUILayout.ExpandWidth(true));
 					GUILayout.Label(volumeCaption, GUILayout.Width(65));
 					GUILayout.Label(weightCaption, GUILayout.Width(65));
 					GUILayout.Label(priceCaption, GUILayout.Width(55));
@@ -195,7 +202,7 @@ public class OrderState : State
 
 				GUILayout.BeginHorizontal();
 				{
-					GUILayout.Label(lot.Item.Name, leftAlignedLabel, GUILayout.ExpandWidth(true));
+					GUILayout.Label(lot.Item.Name, leftAlignedStyle, GUILayout.ExpandWidth(true));
 					GUILayout.Label(lot.Item.Volume.ToString(), GUILayout.Width(65));
 					GUILayout.Label(lot.Item.Weight.ToString(), GUILayout.Width(65));
 					GUILayout.Label("$" + lot.ItemPrice.ToString(), GUILayout.Width(55));
@@ -208,7 +215,7 @@ public class OrderState : State
 
 			GUILayout.BeginVertical();
 			{
-				GUILayout.Label(string.Format(quantityCaption, (int)quantitySlider), normalLabel, GUILayout.ExpandWidth(true));
+				GUILayout.Label(string.Format(quantityCaption, (int)quantitySlider), normalStyle, GUILayout.ExpandWidth(true));
 
 				quantitySlider = GUILayout.HorizontalSlider(quantitySlider, 1, lot.Availability);
 
@@ -222,14 +229,14 @@ public class OrderState : State
 				{
 					GUILayout.BeginVertical();
 					{
-						GUILayout.Label(string.Format(priceCaptions[mode], price), normalLabel);
-						GUILayout.Label(string.Format(balanceCaption, updatedBalance), normalLabel);
+						GUILayout.Label(string.Format(priceCaptions[mode], price), normalStyle);
+						GUILayout.Label(string.Format(balanceCaption, updatedBalance), normalStyle);
 					}
 					GUILayout.EndVertical();
 					GUILayout.BeginVertical();
 					{
-						GUILayout.Label(string.Format(totalVolumeCaption, volume), normalLabel);
-						GUILayout.Label(string.Format(remainingSpaceCaption, updatedSpace), normalLabel);
+						GUILayout.Label(string.Format(totalVolumeCaption, volume), normalStyle);
+						GUILayout.Label(string.Format(remainingSpaceCaption, updatedSpace), normalStyle);
 					}
 					GUILayout.EndVertical();
 				}
@@ -259,7 +266,7 @@ public class OrderState : State
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);	
-			GUILayout.Label(string.Format(confirmOrderCaption, placeOrderCaptions[mode], Mathf.RoundToInt(quantitySlider), lot.Item.Name), normalLabel);
+			GUILayout.Label(string.Format(confirmOrderCaption, placeOrderCaptions[mode], Mathf.RoundToInt(quantitySlider), lot.Item.Name), normalStyle);
 			GUILayout.FlexibleSpace();
 
 			GUILayout.BeginHorizontal();
@@ -267,7 +274,7 @@ public class OrderState : State
 				if(GUILayout.Button("Back")) currentDialog = Dialog.None;
 				if(GUILayout.Button(orderCaptions[mode]))
 				{
-					order = new Order(lot.Item, lot.ItemPrice, Mathf.RoundToInt(quantitySlider));
+					order = new Order(lot.Item, lot.ItemPrice, Mathf.RoundToInt(quantitySlider), lot.Origin);
 
 					if (mode == (int)OrderMode.Buy) currentDialog = listener.BuyOrderPlaced(order);
 					else currentDialog = listener.SellOrderPlaced(order);
@@ -285,7 +292,7 @@ public class OrderState : State
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);	
-			GUILayout.Label(string.Format(summationCaption, Mathf.RoundToInt(quantitySlider), lot.Item.Name, transactionCaptions[mode]), normalLabel);
+			GUILayout.Label(string.Format(summationCaption, Mathf.RoundToInt(quantitySlider), lot.Item.Name, transactionCaptions[mode]), normalStyle);
 			GUILayout.FlexibleSpace();
 			
 			GUILayout.BeginHorizontal();

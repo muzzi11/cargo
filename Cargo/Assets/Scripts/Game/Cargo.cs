@@ -2,9 +2,45 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+public class CargoRecord
+{
+	private Item item;
+	private int quantity, purchasePrice;
+	private string origin;
+
+	public CargoRecord(Item item, int quantity, int purchasePrice, string origin)
+	{
+		this.item = item;
+		this.quantity = quantity;
+		this.purchasePrice = purchasePrice;
+		this.origin = origin;
+	}
+
+	public Item Item
+	{
+		get { return item; }
+	}
+
+	public int Quantity
+	{
+		get { return quantity; }
+		set { quantity = value; }
+	}
+
+	public int PurchasePrice
+	{
+		get { return purchasePrice; }
+	}
+
+	public string Origin
+	{
+		get { return origin; }
+	}
+}
+
 public class Cargo
 {
-	public Dictionary<Item, int> compartments = new Dictionary<Item, int>();
+	public List<CargoRecord> records = new List<CargoRecord>();
 	private int maxVolume, currentvolume;
 
 	public Cargo(int maxVolume)
@@ -12,32 +48,49 @@ public class Cargo
 		this.maxVolume = maxVolume;
 	}
 
-	public bool AddItem(Item item, int quantity)
+	public bool AddItem(Item item, int quantity, int purchasePrice, string origin)
 	{
 		if (currentvolume + item.Volume * quantity > maxVolume) return false;
-
-		if (compartments.ContainsKey(item))
-			compartments[item] += quantity;
-		else compartments.Add(item, quantity);
-
 		currentvolume += item.Volume * quantity;
+
+		foreach (CargoRecord record in records)
+		{
+			if (record.Item.Equals(item) && record.Origin.Equals(origin))
+			{
+				record.Quantity += quantity;
+				return true;
+			}
+		}
+		records.Add(new CargoRecord(item, quantity, purchasePrice, origin));
+		records = records.OrderBy(rec => rec.Item.Name).ToList();
 		return true;
 	}
 
-	public void RemoveItem(Item item, int quantity)
+	public void RemoveItem(Item item, int quantity, string origin)
 	{
-		if (compartments[item] < quantity)
-			compartments[item] -= quantity;
-		else compartments.Remove(item);
-
 		currentvolume -= item.Volume * quantity;
+
+		CargoRecord temp = null;
+		foreach (CargoRecord record in records)
+		{
+			if (record.Item.Equals(item) && record.Origin.Equals(origin))
+			{
+				if (record.Quantity < quantity)				
+					record.Quantity -= quantity;
+				else
+					temp = record;
+				break;
+			}
+		}
+		if (temp != null)
+			records.Remove(temp);
 	}
 
 	public int GetWeight()
 	{
 		int weight = 0;
-		foreach (Item item in compartments.Keys)
-			weight += item.Weight;
+		foreach (CargoRecord record in records)
+			weight += record.Item.Weight;
 
 		return weight;
 	}
@@ -49,16 +102,49 @@ public class Cargo
 
 	public List<Item> GetItems()
 	{
-		return compartments.Keys.ToList();
+		List<Item> items = new List<Item>();
+		foreach (CargoRecord record in records)
+			items.Add(record.Item);
+		return items;
 	}
 
 	public List<int> GetQuantities()
 	{
-		return compartments.Values.ToList();
+		List<int> quantities = new List<int>();
+		foreach (CargoRecord record in records)
+			quantities.Add(record.Quantity);
+		return quantities;
 	}
 
 	public int GetQuantity(Item item)
 	{
-		return compartments[item];
+		foreach (CargoRecord record in records)
+			if (record.Item.Equals(item)) return record.Quantity;
+		return 0;
 	}
+
+	public List<int> GetPrices()
+	{
+		List<int> prices = new List<int> ();
+		foreach (CargoRecord record in records)
+			prices.Add(record.PurchasePrice);
+		return prices;
+	}
+
+	public List<string> GetOrigins()
+	{
+		List<string> origins = new List<string> ();
+		foreach (CargoRecord record in records)
+			origins.Add(record.Origin);
+		return origins;
+	}
+
+	public string GetOrigin(Item item)
+	{
+		foreach (CargoRecord record in records)
+			if (record.Item.Equals(item))
+				return record.Origin;
+		return "";
+	}
+
 }

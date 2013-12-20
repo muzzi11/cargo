@@ -7,6 +7,7 @@ public class Game : MonoBehaviour, BattleListener
 	public float battleChance;
 	public Rect cameraBounds;
 	public GUISkin guiSkin;
+	public AudioClip[] audioClips;
 
 	private float distSinceLastBattle = 0.0f;
 	private bool gameOver = false;
@@ -21,6 +22,7 @@ public class Game : MonoBehaviour, BattleListener
 	// Use this for initialization
 	void Start()
 	{
+	
 		ship = new Ship(new Vector2(0, 0));
 		cargo = new Cargo(200);
 		space = GameObject.Find("Space").GetComponent<Space>();
@@ -40,6 +42,10 @@ public class Game : MonoBehaviour, BattleListener
 
 		playerNode.transform.position = ship.Position;
 		UpdateCameraPosition();
+		
+		if (!audio.isPlaying) playMusic();
+		
+		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
 
 		// Random battle event
 		if(distSinceLastBattle >= battleDistanceInterval)
@@ -78,5 +84,12 @@ public class Game : MonoBehaviour, BattleListener
 		cameraPos.z = Camera.main.transform.position.z;
 		
 		Camera.main.transform.position = cameraPos;
+	}
+
+	private void playMusic()
+	{
+		if (audioClips.Length == 0) return;
+		audio.clip = audioClips[Random.Range(0, audioClips.Length)];
+		audio.Play();
 	}
 }

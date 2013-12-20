@@ -62,5 +62,6 @@ public class BattleObjects : MonoBehaviour
 	{
 		var laserbeam = Instantiate(laserbeamPrefab) as Laserbeam;
 		laserbeam.SetRay(start, end);
+		Debug.Log (laserbeam);
 	}
 }

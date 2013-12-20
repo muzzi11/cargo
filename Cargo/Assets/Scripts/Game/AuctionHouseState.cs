@@ -5,12 +5,14 @@ public class AuctionLot
 {
 	private Item item;
 	private int itemPrice, availability;
+	private string origin;
 
-	public AuctionLot(Item item, int availability, int itemPrice)
+	public AuctionLot(Item item, int availability, int itemPrice, string origin)
 	{
 		this.item = item;
 		this.itemPrice = itemPrice;
 		this.availability = availability;
+		this.origin = origin;
 	}
 
 	public Item Item
@@ -24,6 +26,10 @@ public class AuctionLot
 	public int Availability
 	{
 		get { return availability; }
+	}
+	public string Origin
+	{ 
+		get { return origin; }
 	}
 }
 
@@ -40,7 +46,8 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 	private const string auctionHouseCaption = "Auction house";
 	private const string balanceCaption = "Balance: {0}";
 	private const string cargoCaption = "Cargo space: {0}";
-	private const string normalLabel = "normalLabel";
+	private const string normalStyle = "normalLabel";
+	private string planetName;
 
 	private ItemTable table = new ItemTable();
 	private Economy economy;
@@ -67,21 +74,30 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 		table.AddListener(this);
 	}
 
-	public void LoadEconomy(Economy economy)
+	public void LoadPlanetaryInfo(Economy economy, string planetName)
 	{
 		this.economy = economy;
+		this.planetName = planetName;
 		LoadTable();
 	}
 
 	public void ItemClicked(Item item)
 	{
 		int availability;
-		if (orderMode == OrderState.OrderMode.Buy) availability = economy.GetQuantity(item);
-		else availability = cargo.GetQuantity(item);
+		string planet;
 
-		AuctionLot lot = new AuctionLot(item,
-		                  availability,
-		                  economy.GetPrice(item));
+		if (orderMode == OrderState.OrderMode.Buy) 
+		{
+			availability = economy.GetQuantity(item);
+			planet = planetName;
+		}
+		else 
+		{
+			availability = cargo.GetQuantity(item);
+			planet = cargo.GetOrigin(item);
+		}
+
+		AuctionLot lot = new AuctionLot(item, availability, economy.GetPrice(item), planet);
 		orderState = new OrderState(this, this, lot, orderMode, balance.GetBalance(), cargo.GetRemainingSpace());
 	}
 	
@@ -115,11 +131,11 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 			OrderMode = (OrderState.OrderMode)GUILayout.Toolbar((int)orderMode, toolbarStrings);
 
 			table.Render();
-
+			GUILayout.FlexibleSpace();
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label(string.Format(balanceCaption, balance.GetBalance()), normalLabel);
-				GUILayout.Label(string.Format(cargoCaption, cargo.GetRemainingSpace()), normalLabel);
+				GUILayout.Label(string.Format(balanceCaption, balance.GetBalance()), normalStyle);
+				GUILayout.Label(string.Format(cargoCaption, cargo.GetRemainingSpace()), normalStyle);
 			}
 			GUILayout.EndHorizontal();
 
@@ -142,14 +158,14 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 		else
 		{
 			List<Item> items = cargo.GetItems();
-			table.LoadData(items, cargo.GetQuantities(), economy.GetPrices(items));
+			table.LoadData(items, cargo.GetQuantities(), economy.GetPrices(items), cargo.GetPrices(), cargo.GetOrigins());
 		}
 	}
 
 	public OrderState.Dialog BuyOrderPlaced(Order order)
 	{
 		if (!balance.Withdraw(order.Price)) return OrderState.Dialog.InsufficientFunds;
-		if (!cargo.AddItem(order.Item, order.Quantity)) return OrderState.Dialog.InsufficientSpace;
+		if (!cargo.AddItem(order.Item, order.Quantity, order.ItemPrice, order.Origin)) return OrderState.Dialog.InsufficientSpace;
 		economy.Consume(order.Item, order.Quantity);
 		return OrderState.Dialog.TransactionSummary;
 	}
@@ -157,7 +173,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 	public OrderState.Dialog SellOrderPlaced(Order order)
 	{
 		balance.Deposit(order.Price);
-		cargo.RemoveItem(order.Item, order.Quantity);
+		cargo.RemoveItem(order.Item, order.Quantity, order.Origin);
 		economy.Supply(order.Item, order.Quantity);
 		return OrderState.Dialog.TransactionSummary;
 	}
