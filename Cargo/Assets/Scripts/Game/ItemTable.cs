@@ -60,7 +60,7 @@ public class ItemTable
 				GUILayout.Label(StringTable.priceHeaderCaption, GUILayout.Width(50));
 				if (table[0].Length == 5)
 				{
-					GUILayout.Label(StringTable.purchasePriceHeaderCaption, GUILayout.Width(100));
+					GUILayout.Label(StringTable.purchasePriceHeaderCaption, GUILayout.Width(130));
 					GUILayout.Label(StringTable.originHeaderCaption, GUILayout.Width(80));
 				}
 			}
@@ -82,7 +82,7 @@ public class ItemTable
 					GUILayout.Label(row[2], GUILayout.Width(50));
 					if (row.Length == 5)
 					{
-						GUILayout.Label(row[3], GUILayout.Width(100));
+						GUILayout.Label(row[3], GUILayout.Width(130));
 						GUILayout.Label(row[4], GUILayout.Width(80));
 					}
 				}

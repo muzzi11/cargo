@@ -36,9 +36,9 @@ public class OptionsState : State
 			GUILayout.BeginVertical();
 			{
 				GUILayout.FlexibleSpace();
-				GUILayout.Label("Mute sound", StringTable.titleScreenLabelStye);
+				GUILayout.Label(StringTable.muteCaption, StringTable.titleScreenLabelStye);
 
-				string[] toolbarStrings = {"On", "Off"};
+				string[] toolbarStrings = {StringTable.onCaption, StringTable.offCaption};
 				Mode = (AudioMute)GUILayout.Toolbar((int)mode, toolbarStrings);
 
 				if(GUILayout.Button(StringTable.backCaption, StringTable.titleScreenButtonStyle)) return returnToState;
