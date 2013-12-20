@@ -4,7 +4,11 @@ public class Balance
 
 	public Balance()
 	{
-		balance = 99999;
+		balance = 1000;
+		if(SaveGame.gameData != null)
+		{
+			balance = SaveGame.gameData.balance;
+		}
 	}
 
 	public int GetBalance()
@@ -15,6 +19,7 @@ public class Balance
 	public void Deposit(int cash)
 	{
 		balance += cash;
+		SaveGame.SaveBalance(balance);
 	}
 
 	public bool Withdraw(int cash)
@@ -22,6 +27,8 @@ public class Balance
 		if (balance < cash) return false;
 
 		balance -= cash;
+		SaveGame.SaveBalance(balance);
+
 		return true;
 	}
 }

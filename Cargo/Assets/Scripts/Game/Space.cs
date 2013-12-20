@@ -35,12 +35,23 @@ public class Space : MonoBehaviour
 		return null;
 	}
 
-	// TODO: remove seed
 	public void GeneratePlanets(Rect bounds)
 	{
 		planets.Clear();
 
-		Random.seed = seed;
+		// Make sure seed is always set at the same location, the end
+		SaveGame.Data data;
+		if(SaveGame.gameData == null)
+		{
+			data = new SaveGame.Data();
+			data.seed = Random.seed;
+			SaveGame.SaveSeed(data.seed);
+		}
+		else
+		{
+			data = SaveGame.gameData;
+		}
+		Random.seed = data.seed;
 
 		for(int i = 0; i < StringTable.planetNames.Length; ++i)
 		{

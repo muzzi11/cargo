@@ -1,9 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 public class CargoRecord
 {
+	private static readonly char[] seperator = {';'};
+
 	private Item item;
 	private int quantity, purchasePrice;
 	private string origin;
@@ -36,16 +39,59 @@ public class CargoRecord
 	{
 		get { return origin; }
 	}
+
+	public string Serialize()
+	{
+		StringBuilder builder = new StringBuilder();
+
+		builder.Append(item.id);
+		builder.Append(seperator);
+		builder.Append(quantity);
+		builder.Append(seperator);
+		builder.Append(purchasePrice);
+		builder.Append(seperator);
+		builder.Append(origin);
+
+		return builder.ToString();
+	}
+
+	public static CargoRecord Deserialize(string str)
+	{
+		string[] prop = str.Split(seperator);
+		if(prop.Length != 4)
+		{
+			Debug.LogError("Propery count doesn't match: " + prop.Length.ToString());
+			return null;
+		}
+
+		bool failed = false;
+		int id, quantity, price;
+
+		failed |= !int.TryParse(prop[0], out id);
+		failed |= !int.TryParse(prop[1], out quantity);
+		failed |= !int.TryParse(prop[2], out price);
+
+		if(failed)
+		{
+			Debug.LogError("Failed to parse properties.");
+			return null;
+		}
+
+		return new CargoRecord(new Item(id), quantity, price, prop[3]);
+	}
 }
 
 public class Cargo
 {
+	private static readonly char[] seperator = {'@'};
+
 	public List<CargoRecord> records = new List<CargoRecord>();
 	private int maxVolume, currentvolume;
 
 	public Cargo(int maxVolume)
 	{
 		this.maxVolume = maxVolume;
+		if(SaveGame.gameData != null) Deserialize(SaveGame.gameData.serializedCargo);
 	}
 
 	public bool AddItem(Item item, int quantity, int purchasePrice, string origin)
@@ -58,11 +104,14 @@ public class Cargo
 			if (record.Item.Equals(item) && record.Origin.Equals(origin))
 			{
 				record.Quantity += quantity;
+				SaveGame.SaveCargo(Serialize());
 				return true;
 			}
 		}
 		records.Add(new CargoRecord(item, quantity, purchasePrice, origin));
 		records = records.OrderBy(rec => rec.Item.Name).ToList();
+
+		SaveGame.SaveCargo(Serialize());
 		return true;
 	}
 
@@ -84,6 +133,8 @@ public class Cargo
 		}
 		if (temp != null)
 			records.Remove(temp);
+
+		SaveGame.SaveCargo(Serialize());
 	}
 
 	public int GetWeight()
@@ -147,4 +198,29 @@ public class Cargo
 		return "";
 	}
 
+	public string Serialize()
+	{
+		StringBuilder builder = new StringBuilder();
+
+		foreach(CargoRecord record in records)
+		{
+			builder.Append(record.Serialize());
+			builder.Append(seperator);
+		}
+		builder.Remove(builder.Length - 1, 1);
+
+		return builder.ToString();
+	}
+
+	public void Deserialize(string str)
+	{
+		if(string.IsNullOrEmpty(str)) return;
+
+		string[] serializedData = str.Split(seperator);
+		foreach(string data in serializedData)
+		{
+			var record = CargoRecord.Deserialize(data);
+			if(record != null) AddItem(record.Item, record.Quantity, record.PurchasePrice, record.Origin);
+		}
+	}
 }
