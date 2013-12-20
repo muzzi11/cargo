@@ -23,7 +23,7 @@ public class Ship
 		Ship ship = new Ship(Vector2.zero);
 		int points = (level + 10) * 500 / 10;
 		float damageFraction = Random.Range(0.1f, 0.4f);
-		float damagePenalty = 0.3f;
+		float damagePenalty = 2.3f;
 
 		ship.damage = Mathf.RoundToInt(damageFraction * damagePenalty * points);
 		ship.shield = ship.maxShield = Mathf.RoundToInt((1.0f - damageFraction) * points / 3.0f);
@@ -79,6 +79,16 @@ public class Ship
 		get{ return maxShield; }
 	}
 
+	public void ReplenishShield()
+	{
+		shield = maxShield;
+	}
+
+	public void Stop()
+	{
+		destination.Set(position.x, position.y);
+	}
+
 	// Returns a copy of the ship's position
 	public Vector2 Position
 	{
@@ -90,9 +100,10 @@ public class Ship
 		set{ destination.Set(value.x, value.y);}
 	}
 
-	private void Travel(float distance)
+	private float Travel(float distance)
 	{
 		Vector2 delta = destination - position;
+
 		if(delta.sqrMagnitude > 0)
 		{
 			Vector2 direction = delta.normalized;
@@ -102,10 +113,17 @@ public class Ship
 
 			position += direction * distance;
 		}
-	}
+		else
+		{
+			distance = 0.0f;
+		}
 
-	public void Update()
+		return distance;
+	}
+	
+	// Returns the distance traveled
+	public float Update()
 	{
-		Travel(speed * Time.deltaTime);
+		return Travel(speed * Time.deltaTime);
 	}
 }

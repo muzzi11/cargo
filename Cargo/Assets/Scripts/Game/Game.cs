@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Game : MonoBehaviour
+public class Game : MonoBehaviour, BattleListener
 {
+	public float battleDistanceInterval;
+	public float battleChance;
 	public Rect cameraBounds;
 	public GUISkin guiSkin;
 	public AudioClip[] audioClips;
+
+	private float distSinceLastBattle = 0.0f;
+	private bool gameOver = false;
 
 	private Ship ship;
 	private Cargo cargo;
@@ -31,19 +36,43 @@ public class Game : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		ship.Update();
+		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
+
+		distSinceLastBattle += ship.Update();
+
 		playerNode.transform.position = ship.Position;
 		UpdateCameraPosition();
-
+		
 		if (!audio.isPlaying) playMusic();
 		
 		if(Input.GetKeyDown(KeyCode.Escape)) Application.LoadLevel(0);
+
+		// Random battle event
+		if(distSinceLastBattle >= battleDistanceInterval)
+		{
+			distSinceLastBattle -= battleDistanceInterval;
+			if(Random.value <= battleChance)
+			{
+				ship.Stop();
+				currentState = new BattleState(this, currentState, ship);
+			}
+		}
 	}
 
 	void OnGUI()
 	{
 		GUI.skin = guiSkin;
 		currentState = currentState.UpdateState();
+		if(gameOver)
+		{
+			gameOver = false;
+			currentState = new GameOverState();
+		}
+	}
+
+	public void ShipDestroyed()
+	{
+		gameOver = true;
 	}
 
 	private void UpdateCameraPosition()
