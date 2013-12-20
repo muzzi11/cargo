@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public interface OrderListener
 {
@@ -51,52 +52,61 @@ public class OrderState : State
 
 	public enum Dialog : int
 	{
-		None,
 		InsufficientFunds,
 		InsufficientSpace,
 		Confirmation,
-		TransactionSummary
+		TransactionSummary,
+		None
 	}
 	private Dialog currentDialog = Dialog.None;
 
-	private readonly string[] titleCaptions = { "Buying {0}", "Selling {0}" },
-						   orderCaptions = { "Buy", "Sell" },
-						   placeOrderCaptions = { "buy", "sell"},
-						   sumCaptions = { "Total cost: ${0}", "Profits: ${0}" };
-	
-	private const string nameCaption = "Name:",
-				  		 volumeCaption = "Volume:",
-				   	     weightCaption = "Weight:",
-				   		 priceCaption = "Price:",
-				   		 quantityCaption = "Quantity: x{0}",
-				   		 balanceCaption = "Balance: ${0}",
-						 confirmOrderCaption = "Are you sure you want to {0} {1} {2}?",
-						 confirmTitleCaption = "Please confirm your transaction.",
-						 insufficientFundsCaption = "Insufficient funds!",
-						 dollazShortCaption = "You are {0} dollaz short.";
+	private readonly string[] 
+		titleCaptions = { "Buying {0}", "Selling {0}" },
+		orderCaptions = { "Buy", "Sell" },
+	    placeOrderCaptions = { "buy", "sell"},
+	    priceCaptions = { "Total cost: ${0}", "Profits: ${0}" },
+	    transactionCaptions = { "added to", "removed from" },
+		windowTitleCaptions = { "Insufficient funds!", "Insufficient cargo space!", "Please confirm your transaction.", "Congratulations!"};
+	   
+	private const string 
+		nameCaption = "Name:",
+		volumeCaption = "Volume:",
+		weightCaption = "Weight:",
+		priceCaption = "Price:",
+		quantityCaption = "Quantity: x{0}",
+		balanceCaption = "Balance: ${0}",
+		totalVolumeCaption = "Total volume: {0}",
+		remainingSpaceCaption = "Cargo space: {0}",
+		confirmOrderCaption = "Are you sure you want to {0} {1} {2}?",
+		dollazShortCaption = "You are {0} dollaz short.",
+		cargoSpaceShortCaption = "You need additional {0} cubic meters of free cargo space.",
+		summationCaption = "Transaction completed: {0} {1} have been {2} your cargo hold.";
 
-	private const string leftAlignedLabel = "leftAlignedLabel", normalLabel ="normalLabel";
+	private const string leftAlignedLabel = "leftAlignedLabel", normalLabel = "normalLabel";
 
 	private float quantitySlider = 1.0f;
 	private Vector2 scrollPosition;
 	private State returnToState;
-	private int width, height, orderValue, currentBalance;
+	private int width, height, currentBalance, remainingSpace;
 	private bool returnToPrevState;
 	private AuctionLot lot;
 	private OrderListener listener;
+	private Order order;
+	private GUI.WindowFunction windowFunction;
 
-	public OrderState(State returnToState, OrderListener listener, AuctionLot lot, int currentBalance, OrderMode mode)
+	public OrderState(State returnToState, OrderListener listener, AuctionLot lot, OrderMode mode, int currentBalance, int remainingSpace)
 	{
 		this.returnToState = returnToState;
 		this.lot = lot;
 		this.currentBalance = currentBalance;
+		this.remainingSpace = remainingSpace;
 		this.mode = (int)mode;
 		this.listener = listener;
 
 		width = Screen.width;
 		height = Screen.height;
 	}
-
+	
 	public State UpdateState()
 	{	
 		if (returnToPrevState)
@@ -105,11 +115,20 @@ public class OrderState : State
 			return returnToState;
 		}
 
-		if(lot != null) GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(titleCaptions[mode], lot.Item.Name));
+		GUI.Window(0, new Rect(0, 0, width, height), TransactionWindow, string.Format(titleCaptions[mode], lot.Item.Name));
 
-		if(currentDialog == Dialog.Confirmation) GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), ConfirmationWindow, confirmTitleCaption);
-		else if(currentDialog == Dialog.InsufficientFunds) GUI.ModalWindow(2, new Rect(0, height/4, width, height/2), InsufficientFundsWindow, insufficientFundsCaption);
-		
+		if(currentDialog == Dialog.Confirmation)
+			windowFunction = ConfirmationWindow;
+		else if(currentDialog == Dialog.TransactionSummary)
+			windowFunction = SummationWindow;
+		else if(currentDialog == Dialog.InsufficientFunds) 
+			windowFunction = InsufficientFundsWindow;
+		else if(currentDialog == Dialog.InsufficientSpace)
+			windowFunction = InsufficientSpaceWindow;
+
+		if(currentDialog != Dialog.None)
+			GUI.ModalWindow(1, new Rect(0, height/4, width, height/2), windowFunction, windowTitleCaptions[(int)currentDialog]);
+
 		return this;
 	}
 
@@ -119,17 +138,21 @@ public class OrderState : State
 		return currentBalance + price;
 	}
 
+	private int UpdateCargo(int volume)
+	{
+		if (mode == (int)OrderMode.Buy) return remainingSpace - volume;
+		return remainingSpace + volume;
+	}
+
 	private void InsufficientFundsWindow(int ID)
 	{
-		int tooShort = orderValue - currentBalance;
+		int tooShort = order.Price - currentBalance;
 		
 		GUILayout.BeginVertical();
 		{
 			GUILayout.Space(40);
-			GUILayout.BeginHorizontal();
-			{
-				GUILayout.Label(string.Format(dollazShortCaption, tooShort), normalLabel);
-			}
+			GUILayout.Label(string.Format(dollazShortCaption, tooShort), normalLabel);
+			
 			GUILayout.FlexibleSpace();
 			
 			if(GUILayout.Button("Back")) currentDialog = Dialog.None;
@@ -137,7 +160,23 @@ public class OrderState : State
 		GUILayout.EndVertical();
 	}
 
-	protected void TransactionWindow(int ID)
+	private void InsufficientSpaceWindow(int ID)
+	{
+		int tooShort = (order.Item.Volume * order.Quantity) - remainingSpace;
+		
+		GUILayout.BeginVertical();
+		{
+			GUILayout.Space(40);
+			GUILayout.Label(string.Format(cargoSpaceShortCaption, tooShort), normalLabel);
+
+			GUILayout.FlexibleSpace();
+			
+			if(GUILayout.Button("Back")) currentDialog = Dialog.None;
+		}
+		GUILayout.EndVertical();
+	}
+	
+	private void TransactionWindow(int ID)
 	{
 		GUILayout.BeginVertical();
 		{
@@ -169,13 +208,32 @@ public class OrderState : State
 
 			GUILayout.BeginVertical();
 			{
-				quantitySlider = GUILayout.HorizontalSlider(quantitySlider, 1, lot.Availability);
-				int price = Mathf.RoundToInt (quantitySlider) * lot.ItemPrice;
-				int remainder = UpdateBalance(price);
-
 				GUILayout.Label(string.Format(quantityCaption, (int)quantitySlider), normalLabel, GUILayout.ExpandWidth(true));
-				GUILayout.Label(string.Format(sumCaptions[mode], price), normalLabel);
-				GUILayout.Label(string.Format(balanceCaption, remainder), normalLabel);
+
+				quantitySlider = GUILayout.HorizontalSlider(quantitySlider, 1, lot.Availability);
+
+				int quantity = Mathf.RoundToInt (quantitySlider);
+				int price = quantity * lot.ItemPrice,
+				    volume = quantity * lot.Item.Volume,
+				    updatedBalance = UpdateBalance(price),
+					updatedSpace = UpdateCargo(volume);
+
+				GUILayout.BeginHorizontal();
+				{
+					GUILayout.BeginVertical();
+					{
+						GUILayout.Label(string.Format(priceCaptions[mode], price), normalLabel);
+						GUILayout.Label(string.Format(balanceCaption, updatedBalance), normalLabel);
+					}
+					GUILayout.EndVertical();
+					GUILayout.BeginVertical();
+					{
+						GUILayout.Label(string.Format(totalVolumeCaption, volume), normalLabel);
+						GUILayout.Label(string.Format(remainingSpaceCaption, updatedSpace), normalLabel);
+					}
+					GUILayout.EndVertical();
+				}
+				GUILayout.EndHorizontal();
 			}
 			GUILayout.EndVertical();
 
@@ -194,7 +252,7 @@ public class OrderState : State
 		GUILayout.EndVertical();
 	}
 
-	protected void ConfirmationWindow(int ID)
+	private void ConfirmationWindow(int ID)
 	{
 		GUILayout.FlexibleSpace();
 		
@@ -209,11 +267,30 @@ public class OrderState : State
 				if(GUILayout.Button("Back")) currentDialog = Dialog.None;
 				if(GUILayout.Button(orderCaptions[mode]))
 				{
-					Order order = new Order(lot.Item, lot.ItemPrice, Mathf.RoundToInt(quantitySlider));
+					order = new Order(lot.Item, lot.ItemPrice, Mathf.RoundToInt(quantitySlider));
 
 					if (mode == (int)OrderMode.Buy) currentDialog = listener.BuyOrderPlaced(order);
 					else currentDialog = listener.SellOrderPlaced(order);
 				}
+			}
+			GUILayout.EndHorizontal();
+		}
+		GUILayout.EndVertical();
+	}
+
+	private void SummationWindow(int ID)
+	{
+		GUILayout.FlexibleSpace();
+		
+		GUILayout.BeginVertical();
+		{
+			GUILayout.Space(40);	
+			GUILayout.Label(string.Format(summationCaption, Mathf.RoundToInt(quantitySlider), lot.Item.Name, transactionCaptions[mode]), normalLabel);
+			GUILayout.FlexibleSpace();
+			
+			GUILayout.BeginHorizontal();
+			{
+				if(GUILayout.Button("Ok")) returnToPrevState = true;
 			}
 			GUILayout.EndHorizontal();
 		}

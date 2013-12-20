@@ -42,6 +42,11 @@ public class Cargo
 		return weight;
 	}
 
+	public int GetRemainingSpace()
+	{
+		return maxVolume - currentvolume;
+	}
+
 	public List<Item> GetItems()
 	{
 		return compartments.Keys.ToList();

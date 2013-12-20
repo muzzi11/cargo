@@ -11,8 +11,13 @@ public class NavigationState : State
 	private Vector3 screenPosition;
 
 	private AuctionHouseState auctionHouseState; 
-	private string inventoryCaption = "Inventory";
-	private string transparentStyle = "transparent";
+	private const string inventoryCaption = "Inventory";
+	private const string auctionHouseCaption = "Auction house";
+	private const string welcomeCaption = "Welcome to the planet {0}. You honor us with your visit. " +
+		"Please visit our auction house. Profit awaits you!.";
+	private const string transparentStyle = "transparent";
+	private const string normalStyle = "normalLabel";
+	private bool inOrbit = false, openAuctionHouse = false;
 
 	public NavigationState(Space space, Ship ship, Balance balance, Cargo cargo)
 	{
@@ -29,6 +34,12 @@ public class NavigationState : State
 
 	public State UpdateState()
 	{
+		if(openAuctionHouse)
+		{
+			openAuctionHouse = false;
+			return auctionHouseState;
+		}
+
 		float cameraHeight = -Camera.main.transform.position.z;
 		screenPosition.Set(Input.mousePosition.x, Input.mousePosition.y, cameraHeight);
 		worldPosition = Camera.main.ScreenToWorldPoint(screenPosition);
@@ -50,16 +61,41 @@ public class NavigationState : State
 		}
 		GUILayout.EndHorizontal();
 
-		if (Event.current.type == EventType.Repaint)
-		{
-			if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))
-			{
-				auctionHouseState.LoadEconomy(planetDestination.economy);
-				planetDestination = null;
-				return auctionHouseState;			
-			}
-		}
+		if(Event.current.type == EventType.Repaint)		
+			if(planetDestination != null && planetDestination == space.PlanetAt(ship.Position))			
+				inOrbit = true;
+
+		if(inOrbit) 
+			GUI.ModalWindow(1, new Rect(0, height/4, width, height*0.55f), PlanetWindow, planetDestination.name);
 
 		return this;
+	}
+
+	private void PlanetWindow(int ID)
+	{
+		GUILayout.BeginVertical();
+		{
+			GUILayout.Space(40);
+						
+			GUILayout.Label(string.Format(welcomeCaption, planetDestination.name), normalStyle);
+
+			GUILayout.FlexibleSpace();
+
+			GUILayout.BeginHorizontal();
+			{
+				if(GUILayout.Button("Back")) 
+				{
+					planetDestination = null;
+					inOrbit = false;
+				}
+				if(GUILayout.Button(auctionHouseCaption))
+				{
+					auctionHouseState.LoadEconomy(planetDestination.economy);
+					openAuctionHouse = true;
+				}
+			}
+			GUILayout.EndHorizontal();
+		}
+		GUILayout.EndVertical();
 	}
 }
