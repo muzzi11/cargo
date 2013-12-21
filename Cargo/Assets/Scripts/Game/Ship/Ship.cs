@@ -89,6 +89,7 @@ public class Ship
 	public void ReplenishShield()
 	{
 		shield = maxShield;
+		SaveGame.SaveShipStatus(hull, shield);
 	}
 
 	public void Stop()
