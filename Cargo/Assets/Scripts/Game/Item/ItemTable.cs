@@ -3,13 +3,15 @@ using System.Collections.Generic;
 
 public interface ItemTableListener
 {
-	void ItemClicked(Item item);
+	void ItemClicked(Item item, string origin = "");
 }
 
 public class ItemTable
 {
 	private List<string[]> table = new List<string[]>();
 	private List<Item> items = new List<Item>();
+	private List<string> origins = new List<string>();
+
 	private List<ItemTableListener> listeners = new List<ItemTableListener>();
 
 	private Vector2 scrollPosition;
@@ -23,6 +25,7 @@ public class ItemTable
 	{
 		table.Clear();
 		this.items = items;
+		this.origins = origins;
 
 		for(int i = 0; i < items.Count; ++i)
 		{	
@@ -35,15 +38,17 @@ public class ItemTable
 					'$' + prices[i].ToString(),
 					'$' + purchasePrices[i].ToString(),
 					origins[i]
-				});
-				continue;	
+				});					
 			}
-			table.Add(new string[]
+			else
 			{
-				items[i].Name,
-				'x' + quantities[i].ToString(),
-				'$' + prices[i].ToString()
-			});
+				table.Add(new string[]
+				{
+					items[i].Name,
+					'x' + quantities[i].ToString(),
+					'$' + prices[i].ToString()
+				});
+			}
 		}
 	}
 
@@ -75,7 +80,10 @@ public class ItemTable
 				    {
 						foreach(var listener in listeners)
 						{
-							listener.ItemClicked(items[i]);
+							if (origins != null)
+								listener.ItemClicked(items[i], origins[i]);
+							else 
+								listener.ItemClicked(items[i]);
 						}
 					}
 					GUILayout.Label(row[1], GUILayout.Width(50));

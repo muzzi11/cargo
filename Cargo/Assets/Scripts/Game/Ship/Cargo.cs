@@ -167,10 +167,10 @@ public class Cargo
 		return quantities;
 	}
 
-	public int GetQuantity(Item item)
+	public int GetQuantity(Item item, string origin)
 	{
 		foreach (CargoRecord record in records)
-			if (record.Item.Equals(item)) return record.Quantity;
+			if (record.Item.Equals(item) && record.Origin.Equals(origin)) return record.Quantity;
 		return 0;
 	}
 
@@ -188,14 +188,6 @@ public class Cargo
 		foreach (CargoRecord record in records)
 			origins.Add(record.Origin);
 		return origins;
-	}
-
-	public string GetOrigin(Item item)
-	{
-		foreach (CargoRecord record in records)
-			if (record.Item.Equals(item))
-				return record.Origin;
-		return "";
 	}
 
 	public string Serialize()

@@ -71,7 +71,7 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 		LoadTable();
 	}
 
-	public void ItemClicked(Item item)
+	public void ItemClicked(Item item, string origin)
 	{
 		int availability;
 		string planet;
@@ -83,8 +83,8 @@ public class AuctionHouseState : State, ItemTableListener, OrderListener
 		}
 		else 
 		{
-			availability = cargo.GetQuantity(item);
-			planet = cargo.GetOrigin(item);
+			availability = cargo.GetQuantity(item, origin);
+			planet = origin;
 		}
 
 		AuctionLot lot = new AuctionLot(item, availability, economy.GetPrice(item), planet);
